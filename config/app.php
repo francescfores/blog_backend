@@ -185,7 +185,11 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
-        // 'Example' => App\Facades\Example::class,
+        // 'ExampleClass' => App\Example\ExampleClass::class,
+        //Customs
+        'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class,
+        'JWTFactory' => Tymon\JWTAuth\Facades\JWTFactory::class,
+//        'Mailjet' => Mailjet\LaravelMailjet\Facades\Mailjet::class,
     ])->toArray(),
 
 ];
