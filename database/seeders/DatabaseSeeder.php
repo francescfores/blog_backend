@@ -43,7 +43,7 @@ class DatabaseSeeder extends Seeder
             'desc' => 'desc',
             'img' => 'img',
         ]);
-        $post_content = PostContent::create([
+        $post_content1 = PostContent::create([
             'num' => '1',
             'name' => 'name',
             'desc' => 'desc',
@@ -55,8 +55,13 @@ class DatabaseSeeder extends Seeder
             'desc' => 'desc',
             'img' => 'img',
         ]);
-        $post_coment = PostComment::create([
-            'name' => 'name',
+        $post_coment1 = PostComment::create([
+            'name' => '1',
+            'desc' => 'desc',
+            'img' => 'img',
+        ]);
+        $post_coment2 = PostComment::create([
+            'name' => 'name2',
             'desc' => 'desc',
             'img' => 'img',
         ]);
@@ -65,18 +70,27 @@ class DatabaseSeeder extends Seeder
             'desc' => 'desc',
             'img' => 'img',
         ]);
-        $post_tag = PostTag::create([
+        $post_tag1 = PostTag::create([
             'name' => 'name1',
             'desc' => 'desc',
             'img' => 'img',
         ]);
-        $post_tag = PostTag::create([
+        $post_tag2 = PostTag::create([
             'name' => 'name2',
             'desc' => 'desc',
             'img' => 'img',
         ]);
 
-        $post->contents()->save($post_content);
+        $post->user()->associate($user);
+        $post->category()->associate($post_category);
+        $post->tags()->save($post_tag1);
+        $post->tags()->save($post_tag2);
+
+        $post->contents()->save($post_content1);
         $post->contents()->save($post_content2);
+        $post->comments()->save($post_coment1);
+        $post->comments()->save($post_coment2);
+        $post->save();
+
     }
 }

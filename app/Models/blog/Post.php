@@ -2,6 +2,8 @@
 
 namespace App\Models\blog;
 
+use App\Models\Client;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,7 +19,7 @@ class Post extends Model
 
     public function category()
     {
-        return $this->belongsTo(PostCategory::class);
+        return $this->belongsTo(PostCategory::class, 'post_category_id');
     }
     public function tags()
     {
@@ -30,5 +32,13 @@ class Post extends Model
     public function contents()
     {
         return $this->hasMany(PostContent::class);
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+    public function client()
+    {
+        return $this->belongsTo(Client::class);
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Models\blog;
 
+use App\Models\Client;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -21,7 +23,7 @@ class PostComment extends Model
 
     public function client()
     {
-        return $this->hasMany(User::class,'post_id');
+        return $this->hasMany(Client::class,'post_id');
     }
 
     public function user()

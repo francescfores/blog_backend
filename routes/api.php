@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\blog\v1\PostController;
 use App\Http\Controllers\v1\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -31,6 +32,14 @@ Route::group([
     Route::post('refresh', [AuthController::class,'refresh']);
 
 });
-Route::group(['middleware' => [\App\Http\Middleware\JwtMiddlware::class]], function() {
+//Route::group(['middleware' => [\App\Http\Middleware\JwtMiddlware::class]], function() {
     Route::post('getUser', [AuthController::class,'me']);
-});
+    //post
+    Route::get('post', [PostController::class, 'index']);
+    Route::get('post_paginated', [PostController::class, 'paginated']);
+    Route::get('post/{id}', [PostController::class, 'show']);
+    Route::put('post/{id}', [PostController::class, 'update']);
+    Route::delete('attribute/{id}', [PostController::class, 'destroy']);
+    Route::post('attribute_image/{id}', [PostController::class, 'updateImage']);
+
+//});
