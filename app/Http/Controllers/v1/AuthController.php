@@ -95,31 +95,31 @@ class AuthController extends Controller
         ]);
     }
     //Función que utilizaremos para eliminar el token y desconectar al usuario
-    public function logout(Request $request)
-    {
-        //Validamos que se nos envie el token
-        $validator = Validator::make($request->only('token'), [
-            'token' => 'required'
-        ]);
-        //Si falla la validación
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->messages()], 400);
-        }
-        try {
-            //Si el token es valido eliminamos el token desconectando al usuario.
-            JWTAuth::invalidate($request->token);
-            return response()->json([
-                'success' => true,
-                'message' => 'User disconnected'
-            ]);
-        } catch (JWTException $exception) {
-            //Error chungo
-            return response()->json([
-                'success' => false,
-                'message' => 'Error'
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
+//    public function logout(Request $request)
+//    {
+//        //Validamos que se nos envie el token
+//        $validator = Validator::make($request->only('token'), [
+//            'token' => 'required'
+//        ]);
+//        //Si falla la validación
+//        if ($validator->fails()) {
+//            return response()->json(['error' => $validator->messages()], 400);
+//        }
+//        try {
+//            //Si el token es valido eliminamos el token desconectando al usuario.
+//            JWTAuth::invalidate($request->token);
+//            return response()->json([
+//                'success' => true,
+//                'message' => 'User disconnected'
+//            ]);
+//        } catch (JWTException $exception) {
+//            //Error chungo
+//            return response()->json([
+//                'success' => false,
+//                'message' => 'Error'
+//            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+//        }
+//    }
     //Función que utilizaremos para obtener los datos del usuario y validar si el token a expirado.
     public function getUser(Request $request)
     {
@@ -170,12 +170,12 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-//    public function logout()
-//    {
-//        auth()->logout();
-//
-//        return response()->json(['message' => 'Successfully logged out']);
-//    }
+    public function logout()
+    {
+        auth()->logout();
+
+        return response()->json(['message' => 'Successfully logged out']);
+    }
 
     /**
      * Refresh a token.
@@ -199,7 +199,7 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60
+//            'expires_in' => auth()->factory()->getTTL() * 60
         ]);
     }
 

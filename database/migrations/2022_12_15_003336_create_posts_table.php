@@ -26,11 +26,8 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users')
                 ->onDelete('cascade');
-            $table->unsignedBigInteger('category_id')->nullable();
-            $table->foreign('category_id')->references('id')->on('categories')
-                ->onDelete('cascade');
-            $table->unsignedBigInteger('tag_id')->nullable();
-            $table->foreign('tag_id')->references('id')->on('tags')
+            $table->unsignedBigInteger('post_category_id')->nullable();
+            $table->foreign('post_category_id')->references('id')->on('post_categories')
                 ->onDelete('cascade');
         });
     }

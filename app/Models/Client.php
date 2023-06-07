@@ -2,16 +2,21 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Ecommerce\Address;
+use App\Models\Ecommerce\Order;
+use App\Models\Ecommerce\ReturnOrder;
+use App\Models\Ecommerce\Sending;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable implements JWTSubject
+class Client extends Authenticatable implements JWTSubject
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -19,9 +24,11 @@ class User extends Authenticatable implements JWTSubject
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'id',
+        'nick',
         'email',
         'password',
+        'img',
     ];
 
     /**
@@ -43,7 +50,6 @@ class User extends Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
     ];
 
-    /* jwt */
     public function getJWTIdentifier()
     {
         return $this->getKey();
@@ -51,12 +57,6 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
-    }
-
-    /* blog */
-    public function post()
-    {
-        return $this->belongsTo(Post::class);
     }
 
     /* blog */
@@ -68,4 +68,5 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->belongsTo(PostComent::class);
     }
+
 }
