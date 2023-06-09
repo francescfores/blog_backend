@@ -42,7 +42,7 @@ Route::group([
     Route::get('post/{id}', [PostController::class, 'show']);
     Route::put('post/{id}', [PostController::class, 'update']);
     Route::delete('post/{id}', [PostController::class, 'destroy']);
-    Route::post('post/{id}', [PostController::class, 'updateImage']);
+//    Route::post('post/{id}', [PostController::class, 'updateImage']);
 
     //postcat
     Route::get('post_category', [PostCategoryController::class, 'index']);
