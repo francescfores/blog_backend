@@ -86,8 +86,8 @@ class AuthController extends Controller
             ], 500);
         }
         //Devolvemos el token
-        $user = Auth::user();
-//        $user = User::with('federation','roles','business')->find(Auth::id());
+//        $user = Auth::user();
+        $user = User::with('roles')->find(Auth::id());
 
         return response()->json([
             'token' => $token,

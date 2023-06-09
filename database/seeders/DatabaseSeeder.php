@@ -7,10 +7,13 @@ use App\Models\blog\Post;
 use App\Models\blog\PostCategory;
 use App\Models\blog\PostComment;
 use App\Models\blog\PostContent;
+use App\Models\blog\PostImage;
 use App\Models\blog\PostTag;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class DatabaseSeeder extends Seeder
 {
@@ -25,6 +28,8 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
+
+
         $user = User::create([
             'id' => '1',
             'name' => 'superadmin',
@@ -37,11 +42,24 @@ class DatabaseSeeder extends Seeder
             'lastName' => 'admin',
         ]);
 
+        $role = Role::create(['name' => 'superadmin']);
+        $role->givePermissionTo(Permission::all());
+        $user->assignRole('superadmin');
+        $role = Role::create(['name' => 'admin']);
+        $role->givePermissionTo(Permission::all());
+        $role = Role::create(['name' => 'user']);
+        $role->givePermissionTo(Permission::all());
+
         $post = Post::create([
-            'num' => 'num',
+//            'num' => 'num',
             'name' => 'name',
             'desc' => 'desc',
-            'img' => 'img',
+//            'img' => 'img',
+        ]);
+        $post_img1 = PostImage::create([
+            'name' => 'name',
+            'url' => 'desc',
+            'desc' => 'img',
         ]);
         $post_content1 = PostContent::create([
             'num' => '1',
@@ -65,8 +83,18 @@ class DatabaseSeeder extends Seeder
             'desc' => 'desc',
             'img' => 'img',
         ]);
-        $post_category = PostCategory::create([
-            'name' => 'name',
+        $post_category1 = PostCategory::create([
+            'name' => 'cat1',
+            'desc' => 'desc',
+            'img' => 'img',
+        ]);
+        $post_category2 = PostCategory::create([
+            'name' => 'cat2',
+            'desc' => 'desc',
+            'img' => 'img',
+        ]);
+        $post_category3 = PostCategory::create([
+            'name' => 'cat3',
             'desc' => 'desc',
             'img' => 'img',
         ]);
@@ -82,7 +110,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $post->user()->associate($user);
-        $post->category()->associate($post_category);
+        $post->category()->associate($post_category1);
         $post->tags()->save($post_tag1);
         $post->tags()->save($post_tag2);
 
@@ -90,6 +118,7 @@ class DatabaseSeeder extends Seeder
         $post->contents()->save($post_content2);
         $post->comments()->save($post_coment1);
         $post->comments()->save($post_coment2);
+        $post->images()->save($post_img1);
         $post->save();
 
     }

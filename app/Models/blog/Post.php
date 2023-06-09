@@ -41,4 +41,8 @@ class Post extends Model
     {
         return $this->belongsTo(Client::class);
     }
+    public function images()
+    {
+        return $this->hasMany(PostImage::class);
+    }
 }

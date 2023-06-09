@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\blog\v1\PostCategoryController;
 use App\Http\Controllers\blog\v1\PostController;
 use App\Http\Controllers\v1\AuthController;
 use Illuminate\Http\Request;
@@ -37,9 +38,19 @@ Route::group([
     //post
     Route::get('post', [PostController::class, 'index']);
     Route::get('post_paginated', [PostController::class, 'paginated']);
+    Route::post('post', [PostController::class, 'store']);
     Route::get('post/{id}', [PostController::class, 'show']);
     Route::put('post/{id}', [PostController::class, 'update']);
-    Route::delete('attribute/{id}', [PostController::class, 'destroy']);
-    Route::post('attribute_image/{id}', [PostController::class, 'updateImage']);
+    Route::delete('post/{id}', [PostController::class, 'destroy']);
+    Route::post('post/{id}', [PostController::class, 'updateImage']);
+
+    //postcat
+    Route::get('post_category', [PostCategoryController::class, 'index']);
+    Route::get('post_category_paginated', [PostCategoryController::class, 'paginated']);
+    Route::post('post_category', [PostCategoryController::class, 'store']);
+    Route::get('post_category/{id}', [PostCategoryController::class, 'show']);
+    Route::put('post_category/{id}', [PostCategoryController::class, 'update']);
+    Route::delete('post_category/{id}', [PostCategoryController::class, 'destroy']);
+    Route::post('post_category/{id}', [PostCategoryController::class, 'updateImage']);
 
 //});

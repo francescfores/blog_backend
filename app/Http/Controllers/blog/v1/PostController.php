@@ -4,6 +4,7 @@ namespace App\Http\Controllers\blog\v1;
 use App\Http\Controllers\Controller;
 use App\Models\blog\Post;
 use App\Models\blog\PostCategory;
+use App\Models\blog\PostImage;
 use App\Models\Client;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -36,13 +37,13 @@ class PostController extends Controller
         $posts = Post::with('category','tags','comments','contents','user','client')->get();
         $postscat = PostCategory::get();
         return response()->json([
-            'clients' => $posts
+            'data' => $posts
         ], 200);
     }
     public function paginated(Request $request){
-        $clients = Post::paginate(5);
+        $posts = Post::with('category','tags','comments','contents','user','client')->paginate(5);
         return response()->json([
-            'clients' => $clients
+            'data' => $posts
         ], 200);
     }
     /**
@@ -53,86 +54,50 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-
-        //Respuesta en caso de que todo vaya bien.
-
-        //Validamos los datos
         $data = $request->only('type','name', 'desc', 'price','stock','img', 'category', 'subcategory', 'supercategory');
         $validator = Validator::make($data, [
-            'type' => 'required|max:50|string',
             'name' => 'required|max:50|string',
             'desc' => 'required|max:50|string',
-            'price' => 'required|max:50|string',
-            'stock' => 'required|max:50|string',
-            'img' => 'required|file'
+//            'img' => 'required|file'
         ]);
-        //Si falla la validación
         if ($validator->fails()) {
             return response()->json(['error' => $validator->messages()], 400);
         }
 
-        try {
-            $img = $request->files->get('img');
-            $filename = pathinfo($img->getClientOriginalName(), PATHINFO_FILENAME);
-            $newFilename = $filename.'-'.uniqid().'.'.$img->guessExtension();
-            $newFilename =str_replace(' ', '', $newFilename);
-            $path = $request->file('img')->storeAs(
-                'public/images', $newFilename
-            );
-        } catch (FileException $e) {
-        }
-
-        //Creamos el producto en la BD
-        $product = Product::create([
-            'type' => $request->type,
-            'num' => $request->name,
+        $post = Post::create([
             'name' => $request->name,
             'desc' => $request->desc,
             'price' => $request->price,
-            'stock' => $request->stock,
-            'img' => $newFilename,
         ]);
-        $category = ProductCategory::find($request->category);
-        $subcategory = ProductSubCategory::find($request->subcategory);
-        $supercategory = ProductSuperCategory::find($request->supercategory);
-        $product->category()->associate($category);
-        $product->subcategory()->associate($subcategory);
-        $product->supercategory()->associate($supercategory);
-        $product->save();
+        $user = PostCategory::find($request->user);
+        $category = PostCategory::find($request->category);
+        $post->user()->associate($user);
+        $post->category()->associate($category);
+        $post->save();
 
 
-        //variable type 2
-        $variations = json_decode($request->input('variations'));
-        if($variations){
-            foreach ($variations as $index => $variation) {
-
-                $variation_attributes = $variation->attributes;
-                $variation_img = $request->file("variation.{$index}.img");
-                //$variation_img->store('public/images');
-                $filename = pathinfo($variation_img->getClientOriginalName(), PATHINFO_FILENAME);
-                $newFilename = $filename.'-'.uniqid().'.'.$variation_img->guessExtension();
-                $newFilename =str_replace(' ', '', $newFilename);
-                $path = $variation_img->storeAs(
-                    'public/images', $newFilename
-                );
-                $variation = Variation::create([
-                    'price' => $variation->price,
-                    'stock' => $variation->stock,
-                    'img' => $newFilename,
-                ]);
-                foreach ($variation_attributes as $index => $attribute) {
-                    $variation->attributes()->save(Attribute::find($attribute->id));
+        try {
+            if ($request->hasFile('img')) {
+                $uploadedImages = $request->img;
+                foreach ($uploadedImages as $uploadedImage) {
+                    $originalName = $uploadedImage->getClientOriginalName();
+                    $path = $uploadedImage->storeAs('blog/posts/'.$request->name, $originalName);
+                    $images[] = $path;
+                    $post_img = PostImage::create([
+                        'name' => $originalName,
+                        'url' => $path,
+                        'desc' => 'img',
+                    ]);
+                    $post->images()->save($post_img);
+                    $post->save();
                 }
-                $product->variations()->save($variation);
             }
-            $product->save();
+        } catch (FileException $e) {
         }
 
-        //Respuesta en caso de que todo vaya bien.
         return response()->json([
             'message' => 'Product created',
-            'data' => Product::with(['category','subcategory','supercategory', 'attributes', 'variations.attributes'])->find($product->id),
-            '$path' => $path,
+            'data' => Post::with('category','tags','comments','contents','user','client','images')->find($post->id),
         ], Response::HTTP_OK);
     }
     /**
@@ -338,7 +303,7 @@ class PostController extends Controller
     public function destroy($id)
     {
         //Buscamos el producto
-        $product = Product::findOrfail($id);
+        $product = Post::findOrfail($id);
         //Eliminamos el producto
         $product->delete();
         //Devolvemos la respuesta
