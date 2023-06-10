@@ -143,29 +143,6 @@ class PostCategoryController extends Controller
             'data' => $product
         ], Response::HTTP_OK);
     }
-
-    public function updateImage(Request $request, $id)
-    {
-        if($request->files->get('img')){
-            try {
-                $img = $request->files->get('img');
-                $filename = pathinfo($img->getClientOriginalName(), PATHINFO_FILENAME);
-                $newFilename = $filename.'-'.uniqid().'.'.$img->guessExtension();
-                $newFilename =str_replace(' ', '', $newFilename);
-                $path = $request->file('img')->storeAs(
-                    'public/images', $newFilename
-                );
-            } catch (FileException $e) {
-            }
-        }
-        $product = PostCategory::find($id);
-        $product->img=$newFilename;
-        $product->save();
-        return response()->json([
-            'message' => 'Product created',
-            '$product' => $product,
-        ], Response::HTTP_OK);
-    }
     /**
      * Remove the specified resource from storage.
      *

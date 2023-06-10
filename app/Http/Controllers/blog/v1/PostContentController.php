@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Models\blog\Post;
 use App\Models\blog\PostCategory;
 use App\Models\blog\PostContent;
+use App\Models\blog\PostContentType;
 use App\Models\blog\PostImage;
 use App\Models\Client;
 use App\Models\User;
@@ -18,7 +19,7 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Validator;
-class PostController extends Controller
+class PostContentController extends Controller
 {
 //    protected $user;
     public function __construct(Request $request)
@@ -36,20 +37,22 @@ class PostController extends Controller
     public function index(): JsonResponse
     {
         //Listamos todos los postos
-        $posts = Post::with('category','tags','comments','contents','user','client')->get();
+        $posts = PostContent::with('category','tags','comments','contents','user','client')->get();
         $postscat = PostCategory::get();
         return response()->json([
             'data' => $posts
         ], 200);
     }
-    public function paginated(Request $request){
-        $posts = Post::with('category','tags','comments','contents','user','client','images')->paginate(5);
+    public function getTypes(): JsonResponse
+    {
+        //Listamos todos los postos
+        $postContentType = PostContentType::get();
         return response()->json([
-            'data' => $posts
+            'data' => $postContentType
         ], 200);
     }
-    public function paginatedContent(Request $request, $id){
-        $posts = PostContent::with('type')->paginate(5);
+    public function paginated(Request $request){
+        $posts = PostContent::with('category','tags','comments','contents','user','client')->paginate(5);
         return response()->json([
             'data' => $posts
         ], 200);
@@ -62,35 +65,34 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->only('type','name', 'desc', 'price','stock','img', 'category', 'subcategory', 'supercategory');
+        $data = $request->only('post','num','name','type','desc');
         $validator = Validator::make($data, [
+            'num' => 'required|max:50|string',
             'name' => 'required|max:50|string',
-            'desc' => 'required|string',
+            'type' => 'required|max:50|string',
+            'desc' => 'required|max:50|string',
 //            'img' => 'required|file'
         ]);
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->messages()], 400);
+            return response()->json(['errossssssssr' => $validator->messages()], 400);
         }
 
-        $post = Post::create([
+        $post_content = PostContent::create([
+            'num' => $request->num,
             'name' => $request->name,
-            'subname' => $request->subname,
+            'type' => $request->type,
             'desc' => $request->desc,
-            'price' => $request->price,
         ]);
-        $user = PostCategory::find($request->user);
-        $category = PostCategory::find($request->category);
-        $post->user()->associate($user);
-        $post->category()->associate($category);
-        $post->save();
-
+        $post = PostContent::find($request->post);
+        $post_content->post()->associate($post);
+        $post_content->save();
 
         try {
             if ($request->hasFile('img')) {
                 $uploadedImages = $request->img;
                 foreach ($uploadedImages as $uploadedImage) {
                     $originalName = $uploadedImage->getClientOriginalName();
-                    $path = $uploadedImage->storeAs('public/blog/posts/'.$post->id, $originalName);
+                    $path = $uploadedImage->storeAs('public/blog/posts/'.$post->id.'/'.$post_content->id.'/', $originalName);
                     $images[] = $path;
                     $post_img = PostImage::create([
                         'name' => $originalName,
@@ -106,7 +108,7 @@ class PostController extends Controller
 
         return response()->json([
             'message' => 'post created',
-            'data' => Post::with('category','tags','comments','contents','user','client','images')->find($post->id),
+            'data' => PostContent::with('post')->find($post_content->id),
         ], Response::HTTP_OK);
     }
     /**
@@ -118,7 +120,7 @@ class PostController extends Controller
     public function show($id)
     {
         //Bucamos el posto
-        $post = Post::with('category','tags','comments','contents','user','client')->find($id);;
+        $post = PostContent::with('category','tags','comments','contents','user','client')->find($id);;
         //$Post= Variation::with(['Post', 'Post.category', 'Post.subcategory', 'Post.supercategory', 'attributes'])->find($id);
         //Si el Posto no existe devolvemos error no encontrado
         if (!$post) {
@@ -149,17 +151,16 @@ class PostController extends Controller
 
         $validator = Validator::make($data, [
             'name' => 'required|max:1000|string',
-            'desc' => 'required|string',
+            'desc' => 'required|max:50|string',
 //            'img' => 'required|max:50|string',
 //            'category' => 'required|max:50|string',
         ]);
         //Si falla la validación
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->messages()], 400);
+            return response()->json(['error' => $request], 400);
         }
-        $post = Post::with(['images'])->find($request->id);
+        $post = PostContent::with(['images'])->find($request->id);
         $post->name= $request->name;
-        $post->subname= $request->subname;
         $post->desc= $request->desc;
 //        $user = PostCategory::find($request->user);
         $category = PostCategory::find($request->category);
@@ -222,7 +223,7 @@ class PostController extends Controller
     public function destroy($id)
     {
         //Buscamos el posto
-        $post = Post::findOrfail($id);
+        $post = PostContent::findOrfail($id);
         //Eliminamos el posto
         $post->delete();
         //Devolvemos la respuesta
@@ -230,100 +231,11 @@ class PostController extends Controller
             'message' => 'post deleted successfully'
         ], Response::HTTP_OK);
     }
-    public function postFilters(Request $request)
-    {
-        //$filters = json_decode(json_encode(request()->searchFilters));
-        $query = Variation::with(['post','post.category', 'post.subcategory', 'post.supercategory', 'attributes']);
-        $filters = [
-            'category' => request()->searchFilters[0]['category'],
-            'subcategory' => request()->searchFilters[1]['subcategory'],
-            'supercategory' => request()->searchFilters[2]['supercategory'],
-            'colors' => request()->searchFilters[3]['colors'],
-            'sizes' => request()->searchFilters[4]['sizes'],
-            'attributes' => request()->searchFilters[5]['attributes'],
-            'name' => request()->searchFilters[6]['name'],
-            'sort' => request()->searchFilters[7]['sort']
-        ];
-        if (!empty($filters['name'])) {
-            $query->whereHas('post', function ($q) use ($filters) {
-                $q->where('name', 'like', '%'.$filters['name'].'%');            });
-        }
-        if (!empty($filters['category'])) {
-            $query->whereHas('post', function ($q) use ($filters) {
-                $q->where('category_id', $filters['category']);
-            });
-        }
-        if (!empty($filters['subcategory'])) {
-            $query->whereHas('post', function ($q) use ($filters) {
-                $q->where('subcategory_id', $filters['subcategory']);
-            });
-        }
-        if (!empty($filters['supercategory'])) {
-            $query->whereHas('post', function ($q) use ($filters) {
-                $q->where('supercategory_id', $filters['supercategory']);
-            });
-        }
-        $attributes=[];
-        foreach($filters['attributes'] as $value) {
-            $attributes[] = $value['id'];
-        }
-        $filters['attributes']=$attributes;
-        if (!empty($filters['attributes'])) {
-            $variations = Variation::whereHas('attributes', function ($q) use ($attributes) {
-                $q->whereIn('attribute_id', $attributes);
-            })->get(['id'])->pluck('id');
-            $query->whereIn('id', $variations);
-        }
-
-        $variationsByColorAndpostId = $query->get()->groupBy(['post_id', function ($variation) {
-            return $variation->attributes->where('name', 'color')->first()->value;
-        }]);
-
-        $aux=[];
-        foreach ($variationsByColorAndpostId as $prod){
-            foreach ($prod as $key => $att){
-                //$aux[]=$att[0];
-                array_push($aux,$att[0]);
-            }
-        }
-        if (!empty($filters['sort'])) {
-            if(intval($filters['sort'])===1){
-                usort($aux, function($a, $b) {
-                    return $a->price <=> $b->price;
-                });
-            }else if(intval($filters['sort'])===2){
-                usort($aux, function($a, $b) {
-                    return $b->price <=> $a->price;
-                });
-            }
-
-        }
-
-        $currentPage = LengthAwarePaginator::resolveCurrentPage();
-        $perPage = 4;
-        $paginatedAux = new LengthAwarePaginator(
-            array_slice($aux, ($currentPage - 1) * $perPage, $perPage, true),
-            count($aux),
-            $perPage,
-            $currentPage
-        );
-
-        return response()->json([
-            'message' => 'post created',
-            'data' => [
-                'post' =>$paginatedAux,
-                'post_pg' =>$paginatedAux,
-                'count($aux)' =>$aux,
-                'count($currentPage)' =>$currentPage,
-            ],
-        ], Response::HTTP_OK);
-
-    }
     /*d
      $variations = $query->get(['post_id'])->pluck('post_id');
 
             $posts_colors=[];
-            $post = post::whereIn('id', $variations)->get();
+            $post = PostContent::whereIn('id', $variations)->get();
             foreach ($post as $value) {
                 $variations = Variation::with(['post', 'post.category', 'post.subcategory', 'post.supercategory', 'attributes'])
                     ->where('post_id', $value->id)
@@ -343,5 +255,13 @@ class PostController extends Controller
                 ],
             ], Response::HTTP_OK);
      */
+    public function paginatedContent($id)
+    {
+        $posts = PostContent::with('post')->paginate(5);
+        return response()->json([
+            'data' => $posts
+        ], 200);
+    }
+
 
 }

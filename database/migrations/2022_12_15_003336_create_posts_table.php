@@ -18,6 +18,7 @@ return new class extends Migration
             $table->timestamps();
 //            $table->string('num');
             $table->string('name');
+            $table->string('subname');
             $table->string('desc');
 //            $table->string('img');
             $table->unsignedBigInteger('client_id')->nullable();

@@ -11,13 +11,19 @@ class PostContent extends Model
     protected $fillable = [
         'num',
         'name',
+        'type',
         'desc',
         'img',
+        'img_url',
     ];
 
     public function post()
     {
-        return $this->hasMany(Post::class,'post_id');
+        return $this->belongsTo(Post::class, 'post_id');
+    }
+    public function type()
+    {
+        return $this->belongsTo(PostContentType::class, 'post_content_type_id');
     }
 //
 //    public function client()

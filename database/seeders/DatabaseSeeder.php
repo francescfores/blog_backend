@@ -7,6 +7,7 @@ use App\Models\blog\Post;
 use App\Models\blog\PostCategory;
 use App\Models\blog\PostComment;
 use App\Models\blog\PostContent;
+use App\Models\blog\PostContentType;
 use App\Models\blog\PostImage;
 use App\Models\blog\PostTag;
 use App\Models\User;
@@ -52,26 +53,37 @@ class DatabaseSeeder extends Seeder
 
         $post = Post::create([
 //            'num' => 'num',
-            'name' => 'name',
-            'desc' => 'desc',
+            'name' => ' Lyft launching ',
+            'subname' => ' Lyft launching cross-platform service this week ',
+            'desc' => ' The place is close to Barceloneta Beach and bus stop just 2 min by walk and near to "Naviglio" where you can enjoy the main night life in Barcelona. ',
 //            'img' => 'img',
         ]);
-        $post_img1 = PostImage::create([
-            'name' => 'name',
-            'url' => 'desc',
-            'desc' => 'img',
-        ]);
+//        $post_img1 = PostImage::create([
+//            'name' => 'name',
+//            'url' => 'desc',
+//            'desc' => 'img',
+//        ]);
         $post_content1 = PostContent::create([
             'num' => '1',
             'name' => 'name',
+            'type' => 'type',
             'desc' => 'desc',
             'img' => 'img',
         ]);
         $post_content2 = PostContent::create([
             'num' => '2',
             'name' => 'name',
+            'type' => 'type',
             'desc' => 'desc',
             'img' => 'img',
+        ]);
+        $post_content_type1 = PostContentType::create([
+            'name' => 'name',
+            'desc' => 'desc',
+        ]);
+        $post_content_type2 = PostContentType::create([
+            'name' => 'name',
+            'desc' => 'desc',
         ]);
         $post_coment1 = PostComment::create([
             'name' => '1',
@@ -118,8 +130,11 @@ class DatabaseSeeder extends Seeder
         $post->contents()->save($post_content2);
         $post->comments()->save($post_coment1);
         $post->comments()->save($post_coment2);
-        $post->images()->save($post_img1);
+//        $post->images()->save($post_img1);
         $post->save();
+
+        $post_content1->type()->associate($post_content_type1);
+        $post_content1->save();
 
     }
 }

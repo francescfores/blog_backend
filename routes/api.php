@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\blog\v1\PostCategoryController;
+use App\Http\Controllers\blog\v1\PostContentController;
 use App\Http\Controllers\blog\v1\PostController;
 use App\Http\Controllers\v1\AuthController;
 use Illuminate\Http\Request;
@@ -42,7 +43,7 @@ Route::group([
     Route::get('post/{id}', [PostController::class, 'show']);
     Route::put('post/{id}', [PostController::class, 'update']);
     Route::delete('post/{id}', [PostController::class, 'destroy']);
-//    Route::post('post/{id}', [PostController::class, 'updateImage']);
+    Route::get('post/{id}/post_content_paginated/', [PostController::class, 'paginatedContent']);
 
     //postcat
     Route::get('post_category', [PostCategoryController::class, 'index']);
@@ -52,5 +53,16 @@ Route::group([
     Route::put('post_category/{id}', [PostCategoryController::class, 'update']);
     Route::delete('post_category/{id}', [PostCategoryController::class, 'destroy']);
     Route::post('post_category/{id}', [PostCategoryController::class, 'updateImage']);
+
+
+    Route::get('post_content', [PostContentController::class, 'index']);
+    Route::get('post_content_paginated', [PostContentController::class, 'paginated']);
+    Route::post('post_content', [PostContentController::class, 'store']);
+    Route::get('post_content/{id}', [PostContentController::class, 'show']);
+    Route::put('post_content/{id}', [PostContentController::class, 'update']);
+    Route::delete('post_content/{id}', [PostContentController::class, 'destroy']);
+    Route::post('post_content/{id}', [PostContentController::class, 'updateImage']);
+    //todo create controller ContentType
+    Route::get('post_content_type', [PostContentController::class, 'getTypes']);
 
 //});
