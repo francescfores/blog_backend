@@ -118,7 +118,7 @@ class PostController extends Controller
     public function show($id)
     {
         //Bucamos el posto
-        $post = Post::with('category','tags','comments','contents','user','client')->find($id);;
+        $post = Post::with('category','tags','comments','contents.images','contents.type.attributes','user','client')->find($id);;
         //$Post= Variation::with(['Post', 'Post.category', 'Post.subcategory', 'Post.supercategory', 'attributes'])->find($id);
         //Si el Posto no existe devolvemos error no encontrado
         if (!$post) {

@@ -25,6 +25,10 @@ class PostContent extends Model
     {
         return $this->belongsTo(PostContentType::class, 'post_content_type_id');
     }
+    public function images()
+    {
+        return $this->hasMany(PostImage::class);
+    }
 //
 //    public function client()
 //    {

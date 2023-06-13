@@ -19,7 +19,7 @@ return new class extends Migration
 //            $table->string('num');
             $table->string('name');
             $table->string('subname');
-            $table->string('desc');
+            $table->longText('desc');
 //            $table->string('img');
             $table->unsignedBigInteger('client_id')->nullable();
             $table->foreign('client_id')->references('id')->on('clients')

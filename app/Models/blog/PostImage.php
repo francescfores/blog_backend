@@ -18,4 +18,9 @@ class PostImage extends Model
     {
         return $this->belongsTo(Post::class, 'post_id');
     }
+    public function contents()
+    {
+        return $this->belongsTo(PostContent::class, 'post_content_id');
+    }
+
 }

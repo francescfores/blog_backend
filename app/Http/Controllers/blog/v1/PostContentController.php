@@ -69,7 +69,6 @@ class PostContentController extends Controller
         $validator = Validator::make($data, [
             'num' => 'required|max:50|string',
             'name' => 'required|max:50|string',
-            'type' => 'required|max:50|string',
             'desc' => 'required|max:50|string',
 //            'img' => 'required|file'
         ]);
@@ -80,13 +79,14 @@ class PostContentController extends Controller
         $post_content = PostContent::create([
             'num' => $request->num,
             'name' => $request->name,
-            'type' => $request->type,
             'desc' => $request->desc,
         ]);
-        $post = PostContent::find($request->post);
+        $post = PostContent::with(['images'])->find($request->post);
         $post_content->post()->associate($post);
         $post_content->save();
-
+        $type = PostContentType::find($request->type);
+//        $post->user()->associate($user);
+        $post_content->type()->associate($type);
         try {
             if ($request->hasFile('img')) {
                 $uploadedImages = $request->img;
@@ -99,8 +99,8 @@ class PostContentController extends Controller
                         'url' => $path,
                         'desc' => 'img',
                     ]);
-                    $post->images()->save($post_img);
-                    $post->save();
+                    $post_content->images()->save($post_img);
+                    $post_content->save();
                 }
             }
         } catch (FileException $e) {

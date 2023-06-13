@@ -13,8 +13,13 @@ class PostContentType extends Model
         'desc',
     ];
 
-    public function postContents()
+    public function contents()
     {
         return $this->hasMany(PostContent::class,'post_content_id');
+    }
+
+    public function attributes()
+    {
+        return $this->hasMany(PostContentTypeAttribute::class);
     }
 }
