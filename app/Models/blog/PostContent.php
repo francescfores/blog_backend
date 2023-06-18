@@ -15,6 +15,7 @@ class PostContent extends Model
         'desc',
         'img',
         'img_url',
+        'subcontents',
     ];
 
     public function post()
@@ -28,6 +29,24 @@ class PostContent extends Model
     public function images()
     {
         return $this->hasMany(PostImage::class);
+    }
+    public function attributes()
+    {
+        return $this->hasMany(PostContentAttribute::class);
+    }
+
+    public function subcontents()
+    {
+        return $this->hasMany(PostContent::class, 'post_content_id')->with(
+            'subcontents',
+            'subcontents.type.attributes',
+            'subcontents.attributes',
+        );
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(PostContent::class, 'post_content_id');
     }
 //
 //    public function client()

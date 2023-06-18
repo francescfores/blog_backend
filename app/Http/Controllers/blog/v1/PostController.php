@@ -49,9 +49,15 @@ class PostController extends Controller
         ], 200);
     }
     public function paginatedContent(Request $request, $id){
-        $posts = PostContent::with('type')->paginate(5);
+        //        $posts = Post::with('category','tags','comments','contents','user','client','images')->paginate(5);
+        $data = PostContent::with('post','subcontents', 'type.attributes', 'attributes')
+            ->whereHas('post', function ($query) use ($id) {
+                $query->where('id', $id);
+            })
+            ->paginate(5);
+//        $data = $data->whereNull('post_content_id')->find($id);
         return response()->json([
-            'data' => $posts
+            'data' => $data
         ], 200);
     }
     /**
@@ -118,7 +124,12 @@ class PostController extends Controller
     public function show($id)
     {
         //Bucamos el posto
-        $post = Post::with('category','tags','comments','contents.images','contents.type.attributes','user','client')->find($id);;
+        $post = Post::with(
+            'contents.type.attributes',
+            'contents.attributes',
+            'user',
+            'client')->find($id);
+//        $post2 = $post->contents()->whereNull('post_content_id')->get();
         //$Post= Variation::with(['Post', 'Post.category', 'Post.subcategory', 'Post.supercategory', 'attributes'])->find($id);
         //Si el Posto no existe devolvemos error no encontrado
         if (!$post) {

@@ -27,6 +27,9 @@ return new class extends Migration
             $table->unsignedBigInteger('post_content_type_id')->nullable();
             $table->foreign('post_content_type_id')->references('id')->on('post_content_types')
                 ->onDelete('cascade');
+            $table->unsignedBigInteger('post_content_id')->nullable();
+            $table->foreign('post_content_id')->references('id')->on('post_contents')
+                ->onDelete('cascade');
         });
     }
 

@@ -32,7 +32,12 @@ class Post extends Model
     }
     public function contents()
     {
-        return $this->hasMany(PostContent::class);
+//        return $this->hasMany(PostContent::class,'post_id');
+        return $this->hasMany(PostContent::class)->with(
+            'subcontents',
+            'subcontents.type.attributes',
+            'subcontents.attributes',
+        );
     }
     public function user()
     {

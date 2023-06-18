@@ -5,7 +5,7 @@ namespace App\Models\blog;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class PostContentTypeAttribute extends Model
+class PostContentAttribute extends Model
 {
     use HasFactory;
     protected $fillable = [
@@ -13,8 +13,8 @@ class PostContentTypeAttribute extends Model
         'value',
     ];
 
-    public function type()
+    public function content()
     {
-        return $this->belongsTo(PostContentType::class, 'post_content_type_id');
+        return $this->belongsTo(PostContent::class, 'post_content_id');
     }
 }
