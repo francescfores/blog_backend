@@ -127,6 +127,8 @@ class PostController extends Controller
         $post = Post::with(
             'contents.type.attributes',
             'contents.attributes',
+            'contents.post',
+            'contents.images',
             'user',
             'client')->find($id);
 //        $post2 = $post->contents()->whereNull('post_content_id')->get();
@@ -240,6 +242,25 @@ class PostController extends Controller
         return response()->json([
             'message' => 'post deleted successfully'
         ], Response::HTTP_OK);
+    }
+
+    public function destroyContentRelation($postId, $contentId)
+    {
+        try {
+            // Obtén el post y el contenido
+            $post = Post::findOrFail($postId);
+            $content = PostContent::findOrFail($contentId);
+
+            // Elimina la relación
+            $content->post()->dissociate();
+            $content->update(['post_id' => null]);
+
+            // Puedes devolver una respuesta JSON u otra salida según tus necesidades
+            return response()->json(['message' => $content, 200]);
+        } catch (\Exception $e) {
+            // Manejar errores, por ejemplo, si no se encuentra el post o el contenido
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
     public function postFilters(Request $request)
     {

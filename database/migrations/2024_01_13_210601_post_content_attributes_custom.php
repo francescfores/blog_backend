@@ -13,13 +13,16 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('post_content_attributes', function (Blueprint $table) {
+        Schema::create('post_content_attributes_custom', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
             $table->string('name')->nullable();
             $table->longText('value')->nullable();
             $table->unsignedBigInteger('post_content_id')->nullable();
             $table->foreign('post_content_id')->references('id')->on('post_contents')
+                ->onDelete('cascade');
+            $table->unsignedBigInteger('post_id')->nullable();
+            $table->foreign('post_id')->references('id')->on('posts')
                 ->onDelete('cascade');
         });
     }
@@ -31,6 +34,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('post_content_attributes');
+        Schema::dropIfExists('post_content_attributes_custom');
     }
 };

@@ -44,6 +44,7 @@ Route::group([
     Route::put('post/{id}', [PostController::class, 'update']);
     Route::delete('post/{id}', [PostController::class, 'destroy']);
     Route::get('post/{id}/post_content_paginated/', [PostController::class, 'paginatedContent']);
+    Route::delete('post/{post_id}/content/{content_id}', [PostController::class, 'destroyContentRelation']);
 
     //postcat
     Route::get('post_category', [PostCategoryController::class, 'index']);

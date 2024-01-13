@@ -1,0 +1,14 @@
+
+estructura
+
+un post tiene componentes 
+con un tipo predefinido por la app por ejemplo componente tipo grid 
+con sus atributos
+est quiere decir que al crea agregar un componente
+
+estos componentes pueden tener otros subcomponentes
+
+al momento de agregar un componente a un post tenemos las siguentes opciones:
+crear el componente, name, des..
+podemos elegir entre un tipo de componente de la plataforma por ej grid, card..
+

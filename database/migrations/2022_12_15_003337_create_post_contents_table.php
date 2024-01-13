@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->string('num');
-            $table->string('name');
+            $table->text('name');
             $table->string('desc');
             $table->string('img')->nullable();
             $table->string('img_url')->nullable();
@@ -30,6 +30,10 @@ return new class extends Migration
             $table->unsignedBigInteger('post_content_id')->nullable();
             $table->foreign('post_content_id')->references('id')->on('post_contents')
                 ->onDelete('cascade');
+                $table->unsignedBigInteger('recycled_id')->nullable();
+                $table->unsignedBigInteger('copied_id')->nullable();
+                $table->boolean('global')->nullable();
+
         });
     }
 

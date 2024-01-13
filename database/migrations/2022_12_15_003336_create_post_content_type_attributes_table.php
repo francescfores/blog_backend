@@ -16,8 +16,8 @@ return new class extends Migration
         Schema::create('post_content_type_attributes', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->string('name')->nullable();
-            $table->string('value')->nullable();
+            $table->text('name')->nullable();
+            $table->longText('value');
             $table->unsignedBigInteger('post_content_type_id')->nullable();
             $table->foreign('post_content_type_id')->references('id')->on('post_content_types')
                 ->onDelete('cascade');

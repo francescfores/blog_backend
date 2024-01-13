@@ -16,8 +16,13 @@ class PostContent extends Model
         'img',
         'img_url',
         'subcontents',
+        'global',
+        'recycled_id',
+        'global',
     ];
-
+    protected $attributes = [
+        'global' => false, // Establece el valor por defecto para el campo 'global'
+    ];
     public function post()
     {
         return $this->belongsTo(Post::class, 'post_id');
@@ -35,7 +40,7 @@ class PostContent extends Model
         return $this->hasMany(PostContentAttribute::class);
     }
 
-    public function subcontents()
+    public function subcontents2()
     {
         return $this->hasMany(PostContent::class, 'post_content_id')->with(
             'subcontents',
@@ -47,6 +52,42 @@ class PostContent extends Model
     public function parent()
     {
         return $this->belongsTo(PostContent::class, 'post_content_id');
+    }
+
+    /*new*/
+    public function childs()
+    {
+        return $this->belongsToMany(PostContent::class, 'post_subcontents', 'content_parent_id', 'content_child_id');
+    }
+    public function parents()
+    {
+        return $this->belongsToMany(PostContent::class, 'post_subcontents', 'content_child_id', 'content_parent_id');
+    }
+    public function subcontents()
+    {
+        return $this->childs()->with(
+            'subcontents',
+//            'subcontentsparents',
+            'type.attributes',
+            'attributes',
+        );
+    }
+    public function subcontentsparents()
+    {
+        return $this->parents()->with(
+            'subcontentsparents',
+//            'subcontents',
+            'type.attributes',
+            'attributes',
+        );
+    }
+    public function findparent($id)
+    {
+        return $this->parents()->where('id', '!=', $id)->with(
+            'subcontentsparents',
+            'type.attributes',
+            'attributes',
+        );
     }
 //
 //    public function client()
