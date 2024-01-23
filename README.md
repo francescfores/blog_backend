@@ -64,4 +64,10 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-# blog_backend
+
+#
+# Blog backend
+### Export database (pkg: revolution/sail-db-backup)
+    vendor/bin/sail art sail:backup:mysql
+### Import database from file.sql
+    cat mysql_backup/laravel-202401222254.sql | sail mysql

@@ -2,10 +2,11 @@
 
 namespace App\Models\blog;
 
+use App\Models\blog\Component\Component;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class PostImage extends Model
+class Image extends Model
 {
     use HasFactory;
     protected $fillable = [
@@ -21,6 +22,12 @@ class PostImage extends Model
     public function contents()
     {
         return $this->belongsTo(PostContent::class, 'post_content_id');
+    }
+
+    //new database
+    public function components()
+    {
+        return $this->belongsTo(Component::class, 'component_id');
     }
 
 }

@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers\blog\v1;
 use App\Http\Controllers\Controller;
+use App\Models\blog\Component\ComponentType;
 use App\Models\blog\Post;
 use App\Models\blog\PostCategory;
-use App\Models\blog\PostContent;
-use App\Models\blog\PostContentAttribute;
-use App\Models\blog\PostContentType;
-use App\Models\blog\PostImage;
+use App\Models\blog\Component\Component;
+use App\Models\blog\Image;
 use App\Models\Client;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -39,7 +38,7 @@ class PostContentController extends Controller
     public function index(): JsonResponse
     {
         //Listamos todos los postos
-        $data = PostContent::with('post','parents','subcontents', 'type.attributes', 'attributes')->get();
+        $data = Component::with('post','parents','subcomponents', 'type.attributes', 'attributes')->get();
         return response()->json([
             'data' => $data
         ], 200);
@@ -47,13 +46,13 @@ class PostContentController extends Controller
     public function getTypes(): JsonResponse
     {
         //Listamos todos los postos
-        $postContentType = PostContentType::with('attributes')->get();
+        $ComponentType = ComponentType::with('attributes')->get();
         return response()->json([
-            'data' => $postContentType
+            'data' => $ComponentType
         ], 200);
     }
     public function paginated(Request $request){
-        $data = PostContent::with('post','subcontents', 'type.attributes', 'attributes')
+        $data = Component::with('posts','subcomponents', 'type.attributes', 'attributes')
             ->paginate(5);
         return response()->json([
             'data' => $data
@@ -62,19 +61,20 @@ class PostContentController extends Controller
 
     // Función recursiva para replicar subcomponentes
     function replicarSubcomponentes($originalComponente, $newParentComponente) {
-        foreach ($originalComponente->subcontents as $originalSubcomponente) {
+        foreach ($originalComponente->subcomponents as $originalSubcomponente) {
             // Crea una copia del subcomponente original
             $newSubcomponente = $originalSubcomponente->replicate();
 
             // Guarda el nuevo subcomponente asociado al nuevo componente
-            $newParentComponente->subcontents()->save($newSubcomponente);
+            $newParentComponente->subcomponents()->save($newSubcomponente);
+
             foreach ($newParentComponente->attributes as $attribute) {
                 // Clonar el atributo y asociarlo al nuevo objeto
                 $newAttribute = $attribute->replicate();
                 $newParentComponente->attributes()->save($newAttribute);
             }
+            $newParentComponente->save();
             // Llama recursivamente para replicar subcomponentes de manera anidada
-            $this->replicarSubcomponentes($originalSubcomponente, $newSubcomponente);
         }
     }
 
@@ -86,10 +86,12 @@ class PostContentController extends Controller
      */
     public function store(Request $request)
     {
-
-        $data = $request->only('post','num','name','type','desc','recycled_id','copied_id','global');
+    //tipos de store
+        //crear compoente normal
+        //crear un componente i agregarlo al post
+        //copiar componente
+        $data = $request->only('post','name','type','desc','copied_id','copy_childs');
         $validator = Validator::make($data, [
-            'num' => 'required|max:50|string',
             'name' => 'required|string',
             'desc' => 'required|string',
             'type' => 'required|string',
@@ -98,67 +100,47 @@ class PostContentController extends Controller
         if ($validator->fails()) {
             return response()->json(['error' => $validator->messages()], 400);
         }
-        $post = Post::find($request->post);
-       // return response()->json(['error' => [$post->id,$request->recycled_id,$request->copied_id]], 400);
 
-        if($request->recycled_id !=null){
-            $originalComponent = PostContent::with(['subcontents', 'type.attributes', 'attributes', 'subcontentsparents'])->find($request->recycled_id);
-            $component = $originalComponent->replicate();
-            $component->global = filter_var($request->global, FILTER_VALIDATE_BOOLEAN);
+        if($request->copied_id){
 
-            $component->type()->associate($originalComponent->type);
-            $component->save();
-
-            $this->addAttrToChild($originalComponent,$component);
-
-            $component->save();
-            foreach ($originalComponent->subcontents  as $originalSubcomponent) {
-
-                $component->subcontents()->save($originalSubcomponent);
+            if(!$request->copy_childs){
+                $originalComponent = Component::with(['subcomponents', 'type', 'attributes'])->find($request->copied_id);
+                $component = $originalComponent->replicate();
+                $component->type()->associate($originalComponent->type);
+                $this->addAttrToChild($originalComponent,$component);
                 $component->save();
-                //$this->copySubcontents($originalSubcomponent, null);  // El segundo parámetro es el parent_subcontent_id
             }
-            $component->post()->associate($post);
-            $component->save();
+            else{
+                $originalComponente = Component::with(['subcomponents', 'type', 'attributes'])->find($request->copied_id);
+                // Crea una copia del componente original
+                $component = $originalComponente->replicate();
+                //$component->copied_id=$request->copied_id;
+                // Guarda la nueva copia del componente
+                // Copiar todos los atributos relacionados del original al nuevo
+                $this->addAttrToChild($originalComponente,$component);
+                // Replicar subcomponentes de manera recursiva
+                $this->replicarSubcomponentes($originalComponente, $component);
+                $component->save();
 
-        }
-        else if($request->copied_id){
-            // Obtén el contenido original con sus relaciones cargadas
-            //$originalComponent = PostContent::with(['subcontents', 'type.attributes', 'attributes', 'subcontentsparents'])->find($request->copied_id);
-            $originalComponente = PostContent::with(['subcontents', 'type.attributes', 'attributes', 'subcontentsparents'])->find($request->copied_id);
+                return response()->json([
+                    'message' => 'post $component',
+                    'data' => $component,
+                ], Response::HTTP_OK);
+            }
 
-            // Crea una copia del componente original
-            $component = $originalComponente->replicate();
-            $component->global=false;
-            $component->post()->associate($post);
-            $component->copied_id=$request->copied_id;
-            // Guarda la nueva copia del componente
-            $component->save();
-            // Copiar todos los atributos relacionados del original al nuevo
-            $this->addAttrToChild($originalComponente,$component);
+        }elseif ($request->post){
+            $post = Post::find($request->post);
 
-            // Replicar subcomponentes de manera recursiva
-            $this->replicarSubcomponentes($originalComponente, $component);
-           /*
-            return response()->json([
-                'message' => 'post c',
-                'data' => $component,
-            ], Response::HTTP_OK);
-           */
-        }
-        else{
-            $component = PostContent::create([
-                'num' => $request->num,
+        }else{
+            $component = Component::create([
                 'name' => $request->name,
                 'desc' => $request->desc,
                 'global' => filter_var($request->global, FILTER_VALIDATE_BOOLEAN),
             ]);
-
-            $component->post()->associate($post);
-            $component->save();
-            $type = PostContentType::get()->find($request->type);
-
-//        $post->user()->associate($user);
+            //$component->post()->associate($post);
+            //$component->save();
+            $type = ComponentType::get()->find($request->type);
+            //$post->user()->associate($user);
             $component->type()->associate($type);
             $component->save();
 
@@ -168,12 +150,12 @@ class PostContentController extends Controller
                     foreach ($uploadedImages as $uploadedImage) {
                         $originalName = $uploadedImage->getClientOriginalName();
                         //if($post){
-                            //$path = $uploadedImage->storeAs('public/blog/posts/'.$post->id.'/'.$component->id.'/', $originalName);
+                        //$path = $uploadedImage->storeAs('public/blog/posts/'.$post->id.'/'.$component->id.'/', $originalName);
                         //}else{
-                            $path = $uploadedImage->storeAs('public/blog/components/'.$component->id.'/', $originalName);
+                        $path = $uploadedImage->storeAs('public/blog/components/'.$component->id.'/', $originalName);
                         //}
                         $images[] = $path;
-                        $post_img = PostImage::create([
+                        $post_img = Image::create([
                             'name' => $originalName,
                             'url' => $path,
                             'desc' => 'img',
@@ -184,13 +166,15 @@ class PostContentController extends Controller
                 }
             } catch (FileException $e) {
             }
-
         }
+       // return response()->json(['error' => [$post->id,$request->recycled_id,$request->copied_id]], 400);
+
+
 
 
         return response()->json([
             'message' => 'post createdddddd',
-            'data' => PostContent::with(['subcontents', 'type.attributes', 'attributes', 'subcontentsparents'])->find($component->id),
+            'data' => Component::with(['subcomponents', 'type', 'attributes'])->find($component->id),
         ], Response::HTTP_OK);
     }
 
@@ -213,7 +197,7 @@ class PostContentController extends Controller
     public function show($id)
     {
         //Bucamos el posto
-        $post = PostContent::with(['parents','post','images','subcontents','type.attributes','attributes'])->find($id);;
+        $post = Component::with(['subcomponents', 'type', 'attributes'])->find($id);;
         //Si el Posto no existe devolvemos error no encontrado
         if (!$post) {
             return response()->json([
@@ -235,7 +219,7 @@ class PostContentController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $data = $request->only('post','num','name','type','desc','recycled_id','copied_id','global');
+        $data = $request->only('post','num','name','type','desc','recycled_id','copied_id','global','subcomponent_id');
         $validator = Validator::make($data, [
             'name' => 'required|max:100000|string',
             'desc' => 'required|max:100000|string',
@@ -244,11 +228,12 @@ class PostContentController extends Controller
         if ($validator->fails()) {
             return response()->json(['error' => $validator->messages()], 400);
         }
-        $component = PostContent::with(['subcontents','type.attributes','attributes'])->find($request->id);
+
+        $component = Component::with(['subcomponents','type.attributes','attributes'])->find($request->id);
         $component->name= $request->name;
         $component->desc= $request->desc;
         $component->global=  filter_var($request->global, FILTER_VALIDATE_BOOLEAN);
-        $type = PostContentType::with(['attributes'])->find($request->type);
+        $type = ComponentType::with(['attributes'])->find($request->type);
         //$component->type()->associate($type);
         foreach ($type->attributes as $attribute) {
             if ($request->has($attribute->name)) {
@@ -260,7 +245,7 @@ class PostContentController extends Controller
                         $attr->value = $request->get($attribute->name);
                         $attr->save();
                     }else{
-                        $content_attr = PostContentAttribute::create([
+                        $content_attr = ComponentAttribute::create([
                             'name' => $attribute->name,
                             'value' => $request->get($attribute->name),
                         ]);
@@ -276,14 +261,14 @@ class PostContentController extends Controller
         }
         foreach ($request->all() as $key => $value) {
             if (Str::startsWith($key,'subcontent_')) {
-               // if($component->subcontentsparents()->find($value)==null && $id !== $value && $value!='null'){
-                    $data  = PostContent::with(['subcontents','type.attributes','attributes'])->find($value);
+               // if($component->subcomponentsparents()->find($value)==null && $id !== $value && $value!='null'){
+                    $data  = Component::with(['subcomponents','type.attributes','attributes'])->find($value);
 
                     $newComponente = $data->replicate();
                     $newComponente->global = false;
                     $newComponente->save();
                     $this->replicarSubcomponentes($data, $newComponente);
-                    $component->subcontents()->save($newComponente);
+                    $component->subcomponents()->save($newComponente);
 
               //  }
 
@@ -324,7 +309,7 @@ class PostContentController extends Controller
 //        } catch (FileException $e) {
 //        }
         $component->save();
-        $component = PostContent::with(['subcontents','type.attributes','attributes','subcontentsparents'])->find($component->id);
+        $component = Component::with(['subcomponents','type.attributes','attributes','subcomponentsparents'])->find($component->id);
 
 
         return response()->json([
@@ -348,10 +333,10 @@ class PostContentController extends Controller
     }
     public function getSubcontentWithComponents($subcontentId)
     {
-        $subcontent = PostContent::with('post', 'subcontents', 'type.attributes', 'attributes')->find($subcontentId);
+        $subcontent = Component::with('post', 'subcomponents', 'type.attributes', 'attributes')->find($subcontentId);
 
-        if ($subcontent && $subcontent->subcontents) {
-            foreach ($subcontent->subcontents as $sub) {
+        if ($subcontent && $subcontent->subcomponents) {
+            foreach ($subcontent->subcomponents as $sub) {
                 $sub->subcontent_components = $this->getSubcontentWithComponents($sub->id);
             }
             return response()->json([
@@ -370,9 +355,9 @@ class PostContentController extends Controller
     public function destroy($id)
     {
         //Buscamos el posto
-        $post = PostContent::findOrfail($id);
+        $post = Component::findOrfail($id);
         if ($post->global == 0) {
-            // Elimina el PostContent
+            // Elimina el Component
             $post->delete();
             return response()->json([
                 'message' => 'post deleted successfully'
@@ -387,7 +372,7 @@ class PostContentController extends Controller
      $variations = $query->get(['post_id'])->pluck('post_id');
 
             $posts_colors=[];
-            $post = PostContent::whereIn('id', $variations)->get();
+            $post = Component::whereIn('id', $variations)->get();
             foreach ($post as $value) {
                 $variations = Variation::with(['post', 'post.category', 'post.subcategory', 'post.supercategory', 'attributes'])
                     ->where('post_id', $value->id)
@@ -409,7 +394,7 @@ class PostContentController extends Controller
      */
     public function paginatedContent($id)
     {
-        $posts = PostContent::with('post')->paginate(5);
+        $posts = Component::with('post')->paginate(5);
         return response()->json([
             'data' => $posts
         ], 200);

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\blog\v1\component\ComponentController;
 use App\Http\Controllers\blog\v1\PostCategoryController;
 use App\Http\Controllers\blog\v1\PostContentController;
 use App\Http\Controllers\blog\v1\PostController;
@@ -45,6 +46,7 @@ Route::group([
     Route::delete('post/{id}', [PostController::class, 'destroy']);
     Route::get('post/{id}/post_content_paginated/', [PostController::class, 'paginatedContent']);
     Route::delete('post/{post_id}/content/{content_id}', [PostController::class, 'destroyContentRelation']);
+    Route::post('post/{post_id}/content/{content_id}', [PostController::class, 'addComponent']);
 
     //postcat
     Route::get('post_category', [PostCategoryController::class, 'index']);
@@ -56,14 +58,16 @@ Route::group([
     Route::post('post_category/{id}', [PostCategoryController::class, 'updateImage']);
 
 
-    Route::get('post_content', [PostContentController::class, 'index']);
-    Route::get('post_content_paginated', [PostContentController::class, 'paginated']);
-    Route::post('post_content', [PostContentController::class, 'store']);
-    Route::get('post_content/{id}', [PostContentController::class, 'show']);
-    Route::put('post_content/{id}', [PostContentController::class, 'update']);
-    Route::delete('post_content/{id}', [PostContentController::class, 'destroy']);
-    Route::post('post_content/{id}', [PostContentController::class, 'updateImage']);
+    Route::get('post_content', [ComponentController::class, 'index']);
+    Route::get('post_content_paginated', [ComponentController::class, 'paginated']);
+    Route::post('post_content', [ComponentController::class, 'store']);
+    Route::get('post_content/{id}', [ComponentController::class, 'show']);
+    Route::put('post_content/{id}', [ComponentController::class, 'update']);
+    Route::delete('post_content/{id}', [ComponentController::class, 'destroy']);
+    //refactor
+    Route::delete('destroySubcomponent/{id}', [ComponentController::class, 'destroySubcomponent']);
+    Route::post('post_content/{id}', [ComponentController::class, 'updateImage']);
     //todo create controller ContentType
-    Route::get('post_content_type', [PostContentController::class, 'getTypes']);
+    Route::get('post_content_type', [ComponentController::class, 'getTypes']);
 
 //});

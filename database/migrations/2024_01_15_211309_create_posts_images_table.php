@@ -13,22 +13,20 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('post_subcontent_attributes_custom', function (Blueprint $table) {
+        Schema::create('images', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->string('name')->nullable();
-            $table->longText('value')->nullable();
+            $table->string('name');
+            $table->string('url');
+            $table->string('desc');
+            $table->unsignedBigInteger('post_id')->nullable();
+            $table->foreign('post_id')->references('id')->on('posts')
+                ->onDelete('cascade');
             $table->unsignedBigInteger('post_content_id')->nullable();
             $table->foreign('post_content_id')->references('id')->on('post_contents')
                 ->onDelete('cascade');
-
-            $table->id();
-            $table->timestamps();
-            $table->unsignedBigInteger('content_child_id')->nullable();
-            $table->foreign('content_child_id')->references('id')->on('post_contents')
-                ->onDelete('cascade');
-            $table->unsignedBigInteger('content_parent_id')->nullable();
-            $table->foreign('content_parent_id')->references('id')->on('post_contents')
+            $table->unsignedBigInteger('component_id')->nullable();
+            $table->foreign('component_id')->references('id')->on('component')
                 ->onDelete('cascade');
         });
     }
@@ -40,6 +38,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('post_content_attributes_custom');
+        Schema::dropIfExists('images');
     }
 };

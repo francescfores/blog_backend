@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\blog\v1;
 use App\Http\Controllers\Controller;
+use App\Models\blog\Component\Component;
 use App\Models\blog\Post;
 use App\Models\blog\PostCategory;
 use App\Models\blog\PostContent;
@@ -50,9 +51,9 @@ class PostController extends Controller
     }
     public function paginatedContent(Request $request, $id){
         //        $posts = Post::with('category','tags','comments','contents','user','client','images')->paginate(5);
-        $data = PostContent::with('post','subcontents', 'type.attributes', 'attributes')
-            ->whereHas('post', function ($query) use ($id) {
-                $query->where('id', $id);
+        $data = Component::with('posts','type','subcomponents')
+            ->whereHas('posts', function ($query) use ($id) {
+                $query->where('post_id', $id);
             })
             ->paginate(5);
 //        $data = $data->whereNull('post_content_id')->find($id);
@@ -125,10 +126,10 @@ class PostController extends Controller
     {
         //Bucamos el posto
         $post = Post::with(
-            'contents.type.attributes',
-            'contents.attributes',
-            'contents.post',
-            'contents.images',
+            'components.type',
+            'components.attributes',
+            'components.images',
+            'components.subcomponents',
             'user',
             'client')->find($id);
 //        $post2 = $post->contents()->whereNull('post_content_id')->get();
@@ -249,14 +250,32 @@ class PostController extends Controller
         try {
             // Obtén el post y el contenido
             $post = Post::findOrFail($postId);
-            $content = PostContent::findOrFail($contentId);
+            $content = Component::findOrFail($contentId);
 
             // Elimina la relación
-            $content->post()->dissociate();
-            $content->update(['post_id' => null]);
+            $post->components()->detach($content->id);
 
             // Puedes devolver una respuesta JSON u otra salida según tus necesidades
             return response()->json(['message' => $content, 200]);
+        } catch (\Exception $e) {
+            // Manejar errores, por ejemplo, si no se encuentra el post o el contenido
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function addComponent($postId, $contentId)
+    {
+        try {
+            // Obtén el post y el contenido
+            $post = Post::findOrFail($postId);
+            $component = Component::findOrFail($contentId);
+            $post->components()->save($component);
+
+            // Puedes devolver una respuesta JSON u otra salida según tus necesidades
+            return response()->json([
+                'message' => 'eeeeeee created',
+                'data' => $post,
+            ], Response::HTTP_OK);
         } catch (\Exception $e) {
             // Manejar errores, por ejemplo, si no se encuentra el post o el contenido
             return response()->json(['error' => $e->getMessage()], 500);

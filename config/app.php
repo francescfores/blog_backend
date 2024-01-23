@@ -173,6 +173,8 @@ return [
         Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
         /* permission */
         Spatie\Permission\PermissionServiceProvider::class,
+        Barryvdh\Debugbar\ServiceProvider::class,
+
     ])->toArray(),
 
     /*
@@ -192,6 +194,8 @@ return [
         'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class,
         'JWTFactory' => Tymon\JWTAuth\Facades\JWTFactory::class,
 //        'Mailjet' => Mailjet\LaravelMailjet\Facades\Mailjet::class,
+        'Debugbar' => Barryvdh\Debugbar\Facades\Debugbar::class,
+
     ])->toArray(),
 
 ];

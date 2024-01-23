@@ -2,6 +2,7 @@
 
 namespace App\Models\blog;
 
+use App\Models\blog\Component\Component;
 use App\Models\Client;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -9,6 +10,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
 {
+    protected $table = 'post';
+
     use HasFactory;
     protected $fillable = [
         'num',
@@ -50,6 +53,16 @@ class Post extends Model
     }
     public function images()
     {
-        return $this->hasMany(PostImage::class);
+        return $this->hasMany(Image::class);
+    }
+
+    //New database
+    public function components()
+    {
+        return $this->belongsToMany(
+            Component::class,
+            'post_component',
+            'post_id',
+            'component_id');
     }
 }
