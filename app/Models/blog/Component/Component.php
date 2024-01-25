@@ -27,7 +27,7 @@ class Component extends Model
             'subcomponent_attributes',
             'component.type',
             'component.attributes',
-        );
+        )->orderBy('order');
     }
 
     public function posts()

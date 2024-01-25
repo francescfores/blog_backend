@@ -63,11 +63,13 @@ Route::group([
     Route::post('post_content', [ComponentController::class, 'store']);
     Route::get('post_content/{id}', [ComponentController::class, 'show']);
     Route::put('post_content/{id}', [ComponentController::class, 'update']);
+    Route::post('post_content/reorder/{id}', [ComponentController::class, 'reorder']);
     Route::delete('post_content/{id}', [ComponentController::class, 'destroy']);
     //refactor
     Route::delete('destroySubcomponent/{id}', [ComponentController::class, 'destroySubcomponent']);
     Route::post('post_content/{id}', [ComponentController::class, 'updateImage']);
     //todo create controller ContentType
     Route::get('post_content_type', [ComponentController::class, 'getTypes']);
+    Route::post('component/filter', [ComponentController::class, 'filter']);
 
 //});

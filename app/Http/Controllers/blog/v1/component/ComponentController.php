@@ -62,6 +62,55 @@ class ComponentController extends Controller
         ], 200);
     }
 
+    public function filter(Request $request){
+        $data = Component::with('posts','images','parents','subcomponents', 'type', 'attributes')
+            ->paginate(5);
+        $data = $request->all();
+
+        $columns = $data['filter']['columns'];
+        $page = $data['filter']['current_page'];
+
+        // Inicia la consulta con el modelo
+        $query = Component::query()->with(['posts','subcomponents', 'type', 'attributes']);
+
+        // Aplica orden y filtrado para cada columna
+        foreach ($columns as $column) {
+            if ($column['order']) {
+                // Si la columna es 'type', realiza el orden considerando la relación
+                if ($column['column_name'] === 'type') {
+                    /*
+                     * Se utiliza la función leftJoin para unir la tabla component_type
+                     * en caso de que estés ordenando por la columna 'type'. Luego, se utiliza orderBy para aplicar la ordenación.
+                     */
+                    $query->leftJoin('component_type', 'component.component_type_id', '=', 'component_type.id')
+                        ->orderBy('component_type.name', $column['order']);
+                } else {
+                    // Si no es 'type', realiza el orden directamente en la tabla actual
+                    $query->orderBy($column['column_name'], $column['order']);
+                }
+            }
+            if ($column['value'] !== null) {
+                // Si la columna es 'type', realiza el filtrado considerando la relación
+                if ($column['column_name'] === 'type') {
+                    $query->whereHas('type', function ($subquery) use ($column) {
+                        $subquery->where('name', 'LIKE', "%{$column['value']}%");
+                    });
+                } else {
+                    // Si no es 'type', realiza el filtrado directamente en la tabla actual
+                    $query->where($column['column_name'], 'LIKE', "%{$column['value']}%");
+                }
+            }
+        }
+
+        // Pagina el resultado
+        $perPage = 5; // Cantidad de resultados por página, ajusta según tus necesidades
+        $data = $query->paginate($perPage, ['*'], 'page', $page);
+
+        return response()->json([
+            'data' => $data
+        ], 200);
+    }
+
     // Función recursiva para replicar subcomponentes
     function replicateComponent($component) {
         $component = $component->replicate();
@@ -468,6 +517,29 @@ class ComponentController extends Controller
             'data' => $posts
         ], 200);
     }
+    public function reorder(Request $request, $parentComponentId)
+    {
+        // Validación de la solicitud
+        $request->validate([
+            'newOrder' => 'required|array',
+            'newOrder.*.subcomponentId' => 'required|integer',
+            'newOrder.*.order' => 'required|integer',
+        ]);
 
+        // Lógica para reordenar los subcomponentes
+        $newOrder = $request->input('newOrder');
+
+        foreach ($newOrder as $item) {
+            $subcomponentId = $item['subcomponentId'];
+            $order = $item['order'];
+            // Actualiza el orden en la base de datos según tus modelos y relaciones
+            // Aquí asumimos que tienes un modelo llamado Component y una relación llamada subcomponents
+            $subcomponent = Subcomponent::find($subcomponentId);
+            $subcomponent->order = $order;
+            $subcomponent->save();
+        }
+        $component = Component::find($parentComponentId);
+        return response()->json(['message' => 'Reordenación exitosa', 'data'=>$component], 200);
+    }
 
 }

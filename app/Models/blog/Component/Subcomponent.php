@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Subcomponent extends Model
 {
-    protected $fillable = ['component_parent_id', 'component_child_id','subcomponent_id'];
+    protected $fillable = ['component_parent_id', 'component_child_id','subcomponent_id','order'];
     protected $table = 'subcomponent';
 
     public function component()
@@ -27,7 +27,7 @@ class Subcomponent extends Model
             'component.type',
             'subcomponent_attributes',
             'subcomponents',
-        );
+        )->orderBy('order');
     }
 
     public function subcomponent_attributes()
