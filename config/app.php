@@ -173,7 +173,7 @@ return [
         Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
         /* permission */
         Spatie\Permission\PermissionServiceProvider::class,
-        Barryvdh\Debugbar\ServiceProvider::class,
+//        Barryvdh\Debugbar\ServiceProvider::class,
 
     ])->toArray(),
 

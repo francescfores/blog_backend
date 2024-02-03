@@ -35,6 +35,10 @@ class ComponentsSeeder_v3 extends Seeder
             'name' => 'codeplayground_v2',
             'desc' => 'desc',
         ]);
+        $component6_type_attr = ComponentAttribute::create([
+            'name' => 'styles',
+            'value' => 'w-full',
+        ]);
         $component6_type_attr1 = ComponentAttribute::create([
             'name' => 'html',
             'value' => '<p>Testing</p>',
@@ -73,6 +77,7 @@ class ComponentsSeeder_v3 extends Seeder
         ]);
         //$post->components()->save($component6);
         $component6->type()->associate($component6_type);
+        $component6->attributes()->save($component6_type_attr);
         $component6->attributes()->save($component6_type_attr1);
         $component6->attributes()->save($component6_type_attr2);
         $component6->attributes()->save($component6_type_attr3);

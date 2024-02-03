@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\v1;
 use App\Http\Controllers\Controller;
-use App\Models\Business;
+//use App\Models\Business;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 use Tymon\JWTAuth\Facades\JWTAuth;

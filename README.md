@@ -71,3 +71,24 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
     vendor/bin/sail art sail:backup:mysql
 ### Import database from file.sql
     cat mysql_backup/laravel-202401222254.sql | sail mysql
+
+
+## db comands
+
+    sail artisna migrate
+    sail artisna migrate:fresh
+    sail artisan db:seed --class=DatabaseSeeder
+    sail artisan migrate:refresh && sail artisan db:seed --class=DatabaseSeeder
+
+## db queries
+
+    select b.name from subcomponent a, component b where a.component_child_id = b.id;
+
+
+## config fly
+  fly launch
+  fly ssh console
+  fly secrets set DB_USERNAME=3lc3vfwuq34tglq4fv1i
+  DB_PASSWORD=pscale_pw_hJMzGY4dhzHACfivHg8JoSfZjUwoiPHsxmelVCq4sLr
+  php artisan jwt:generate
+  fly secrets set JWT_SECRET=sp12f1rd9JIs1Dh1DXnVncSRRgQsbjm4znO3olHutwYyfsV9Nppuxt2pvQKghzFO

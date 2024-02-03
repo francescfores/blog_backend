@@ -356,7 +356,8 @@ class ComponentController extends Controller
 
         foreach ($request->all() as $key => $value) {
             if (Str::startsWith($key,'subcontent_')) {
-                if( $id !== $value && $value!='null'){
+//                if( $id !== $value && $value!='null'){
+                if($value!='null'){
                     $originalComponente = Component::with(['subcomponents', 'type', 'attributes'])->find($value);
 
                     if($subcomponent){
@@ -364,15 +365,16 @@ class ComponentController extends Controller
                         $componente = Component::with(['subcomponents'])->find($value);
                         $subNew = Subcomponent::create([
                             'component_child_id' => $value,
-                            'subcomponent_id' => $originalSubComponente->id,
+                            'subcomponent_id' => $subcomponent->id,
+                            'order' => count($originalSubComponente->subcomponents)+1,
                         ]);
                         $originalSubComponente->subcomponents()->save($subNew);
 
                         foreach ($componente->subcomponents as $subMain) {
-
                             $subNew2 = Subcomponent::create([
                                 'component_child_id' => $subMain->component->id,
                                 'subcomponent_id' => $subNew->id,
+                                'order' => count($originalSubComponente->subcomponents)+1,
                             ]);
                             $subNew->subcomponents()->save($subNew2);
 
@@ -388,6 +390,8 @@ class ComponentController extends Controller
                         $subNew = Subcomponent::create([
                             'component_child_id' => $originalComponente->id,
                             'component_parent_id' => $component->id,
+                            'order' => count($originalComponente->subcomponents)+1,
+
                         ]);
                         $subNew->save();
                         $this->replicateSubComponent($originalComponente,$subNew);
@@ -432,7 +436,7 @@ class ComponentController extends Controller
         }
         $component->save();
         return response()->json([
-            'message' => 'eeeeeee created',
+            'message' => 'created',
             'data' => $component,
         ], Response::HTTP_OK);
         //Devolvemos los datos actualizados.
@@ -538,7 +542,7 @@ class ComponentController extends Controller
             $subcomponent->order = $order;
             $subcomponent->save();
         }
-        $component = Component::find($parentComponentId);
+        $component = Component::with(['posts','subcomponents', 'type', 'attributes'])->find($request->input('parent_id'));
         return response()->json(['message' => 'Reordenación exitosa', 'data'=>$component], 200);
     }
 

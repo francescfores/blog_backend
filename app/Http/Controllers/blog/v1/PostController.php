@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\blog\v1;
 use App\Http\Controllers\Controller;
 use App\Models\blog\Component\Component;
+use App\Models\blog\Image;
 use App\Models\blog\Post;
 use App\Models\blog\PostCategory;
 use App\Models\blog\PostContent;
-use App\Models\blog\PostImage;
 use App\Models\Client;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -99,7 +99,7 @@ class PostController extends Controller
                     $originalName = $uploadedImage->getClientOriginalName();
                     $path = $uploadedImage->storeAs('public/blog/posts/'.$post->id, $originalName);
                     $images[] = $path;
-                    $post_img = PostImage::create([
+                    $post_img = Image::create([
                         'name' => $originalName,
                         'url' => $path,
                         'desc' => 'img',
@@ -187,9 +187,9 @@ class PostController extends Controller
 
                 foreach ($images as $image) {
 
-                    $image = PostImage::find($image->id);
+                    $image = Image::find($image->id);
                     if($image!==null){
-                        $img = PostImage::where('name', $image->name)->get();
+                        $img = Image::where('name', $image->name)->get();
                         if($img!==null && Storage::exists('public/blog/posts/'.$post->id.'/'.$image->name)){
                             Storage::delete('public/blog/posts/'.$post->id.'/'.$image->name);
                             $image->delete();
@@ -199,10 +199,10 @@ class PostController extends Controller
                 }
                 foreach ($uploadedImages as $uploadedImage) {
                     $originalName = $uploadedImage->getClientOriginalName();
-                    $img = PostImage::where('name', $originalName)->get();
+                    $img = Image::where('name', $originalName)->get();
                     if($img!==null){
                         $path = $uploadedImage->storeAs('public/blog/posts/'.$post->id, $originalName);
-                        $post_img = PostImage::create([
+                        $post_img = Image::create([
                             'name' => $originalName,
                             'url' => $path,
                             'desc' => 'img',
