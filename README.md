@@ -70,15 +70,15 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 ### Export database (pkg: revolution/sail-db-backup)
     vendor/bin/sail art sail:backup:mysql
 ### Import database from file.sql
-    cat mysql_backup/laravel-202401222254.sql | sail mysql
-
+    cat mysql_backup/laravel-202402010246.sql | vendor/bin/sail mysql
+    cat mysql_backup/laravel-202409241550.sql | vendor/bin/sail mysql
 
 ## db comands
 
-    sail artisna migrate
-    sail artisna migrate:fresh
-    sail artisan db:seed --class=DatabaseSeeder
-    sail artisan migrate:refresh && sail artisan db:seed --class=DatabaseSeeder
+    vendor/bin/sailsail artisna migrate
+    vendor/bin/sailsail artisna migrate:fresh
+    vendor/bin/sailsail artisan db:seed --class=DatabaseSeeder
+    vendor/bin/sailsail artisan migrate:refresh && vendor/bin/sailsail artisan db:seed --class=DatabaseSeeder
 
 ## db queries
 

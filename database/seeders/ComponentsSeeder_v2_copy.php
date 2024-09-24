@@ -26,7 +26,7 @@ class ComponentsSeeder_v2_copy extends Seeder
      */
     public function run(): void
     {
-        //post
+/*         //post
         $post = Post::create([
             'name' => 'Building a Magical 3D Button',
             'subname' => 'subname',
@@ -38,9 +38,9 @@ class ComponentsSeeder_v2_copy extends Seeder
             'desc' => 'desc',
             'img' => 'img',
         ]);
-        $post->category()->associate($post_category);
+        $post->category()->associate($post_category); */
 
-        //types of components
+        /* //types of components
         $component_grid_type = ComponentType::create([
             'name' => 'grid',
             'desc' => 'type grid',
@@ -160,7 +160,7 @@ class ComponentsSeeder_v2_copy extends Seeder
         $component_card->save();
 
         $component_grid->save();
-        $component_grid_type->save();
+        $component_grid_type->save(); */
         //$post->save();
 
 
@@ -196,6 +196,10 @@ class ComponentsSeeder_v2_copy extends Seeder
         $component6_type = ComponentType::create([
             'name' => 'codeplayground_v2',
             'desc' => 'desc',
+        ]);
+        $component6_type_attr = ComponentAttribute::create([
+            'name' => 'styles',
+            'value' => 'w-full',
         ]);
         $component6_type_attr1 = ComponentAttribute::create([
             'name' => 'html',
@@ -235,6 +239,7 @@ class ComponentsSeeder_v2_copy extends Seeder
         ]);
         //$post->components()->save($component6);
         $component6->type()->associate($component6_type);
+        $component6->attributes()->save($component6_type_attr);
         $component6->attributes()->save($component6_type_attr1);
         $component6->attributes()->save($component6_type_attr2);
         $component6->attributes()->save($component6_type_attr3);
@@ -247,7 +252,7 @@ class ComponentsSeeder_v2_copy extends Seeder
         $component6->save();
         $component6_type->save();
 
-
+/* 
         $component7 = Component::create([
             'name' => 'img component',
             'desc' => 'img',
@@ -289,7 +294,7 @@ class ComponentsSeeder_v2_copy extends Seeder
         $component7->attributes()->save($component7_type_attr3);
         $component7->save();
         $component7_type->save();
-        $post->save();
+        $post->save(); */
 
     }
 }

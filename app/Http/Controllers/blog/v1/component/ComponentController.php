@@ -41,7 +41,7 @@ class ComponentController extends Controller
     public function index(): JsonResponse
     {
         //Listamos todos los postos
-        $data = Component::with('posts','images','parents','subcomponents', 'type', 'attributes')->get();
+        $data = Component::with('posts','images','parents','subcomponents.subcomponent_attributes', 'type', 'attributes')->get();
         return response()->json([
             'data' => $data
         ], 200);
@@ -55,7 +55,7 @@ class ComponentController extends Controller
         ], 200);
     }
     public function paginated(Request $request){
-        $data = Component::with('posts','images','parents','subcomponents', 'type', 'attributes')
+        $data = Component::with('posts','images','parents','subcomponents.subcomponent_attributes', 'type', 'attributes')
             ->paginate(5);
         return response()->json([
             'data' => $data
@@ -63,7 +63,7 @@ class ComponentController extends Controller
     }
 
     public function filter(Request $request){
-        $data = Component::with('posts','images','parents','subcomponents', 'type', 'attributes')
+        $data = Component::with('posts','images','parents','subcomponents.subcomponent_attributes', 'type', 'attributes')
             ->paginate(5);
         $data = $request->all();
 
@@ -71,7 +71,7 @@ class ComponentController extends Controller
         $page = $data['filter']['current_page'];
 
         // Inicia la consulta con el modelo
-        $query = Component::query()->with(['posts','subcomponents', 'type', 'attributes']);
+        $query = Component::query()->with(['posts','subcomponents.subcomponent_attributes', 'type', 'attributes']);
 
         // Aplica orden y filtrado para cada columna
         foreach ($columns as $column) {
@@ -176,12 +176,12 @@ class ComponentController extends Controller
             return response()->json(['error' => $validator->messages()], 400);
         }
 
-        if($request->copied_id){
-              if($request->copy_childs){
-                  $originalComponente = Component::with(['posts','subcomponents', 'type', 'attributes'])->find($request->copied_id);
+        if($request->copied_id && $request->copied_id!='undefined'){
+              if($request->copy_childs && $request->copy_childs!='undefined'){
+                  $originalComponente = Component::with(['posts','subcomponents.subcomponent_attributes', 'type', 'attributes'])->find($request->copied_id);
                   $component= $this->replicateComponent($originalComponente);
               }else{
-                  $originalComponent = Component::with(['posts','subcomponents', 'type', 'attributes'])->find($request->copied_id);
+                  $originalComponent = Component::with(['posts','subcomponents.subcomponent_attributes', 'type', 'attributes'])->find($request->copied_id);
                   $component = $originalComponent->replicate();
                   $component->type()->associate($originalComponent->type);
                   $component->save();
@@ -227,7 +227,7 @@ class ComponentController extends Controller
         } catch (FileException $e) {
         }
 
-        if ($request->post){
+        if ($request->post!='undefined'){
             $post = Post::with(['components'])->find($request->post);
             $post->components()->save($component);
             $post->save();
@@ -257,7 +257,7 @@ class ComponentController extends Controller
     public function show($id)
     {
         //Bucamos el posto
-        $post = Component::with(['parents','posts','images','subcomponents','type','attributes'])->find($id);;
+        $post = Component::with(['parents','posts','images','subcomponents.subcomponent_attributes','type','attributes'])->find($id);;
         //Si el Posto no existe devolvemos error no encontrado
         if (!$post) {
             return response()->json([
@@ -279,6 +279,7 @@ class ComponentController extends Controller
      */
     public function update(Request $request, $id)
     {
+        
         $data = $request->only('post','num','name','type','desc','recycled_id','copied_id','global','subcomponent_id');
         $validator = Validator::make($data, [
             'name' => 'required|max:100000|string',
@@ -293,12 +294,12 @@ class ComponentController extends Controller
             $component = Component::whereHas('parents', function ($query) use ($request) {
                 $query->where('id', $request->subcomponent_id);
             })
-                ->with(['subcomponents', 'type', 'attributes'])
+                ->with(['subcomponents.subcomponent_attributes', 'type', 'attributes'])
                 ->first();
             $subcomponent = Subcomponent::with(['component','subcomponent_attributes'])
                 ->find($request->subcomponent_id);
         }else{
-            $component = Component::with(['subcomponents', 'type', 'attributes'])
+            $component = Component::with(['subcomponents.subcomponent_attributes', 'type', 'attributes'])
                 ->find($request->id);
         }
         $component->name= $request->name;
@@ -358,11 +359,12 @@ class ComponentController extends Controller
             if (Str::startsWith($key,'subcontent_')) {
 //                if( $id !== $value && $value!='null'){
                 if($value!='null'){
-                    $originalComponente = Component::with(['subcomponents', 'type', 'attributes'])->find($value);
-
+                    $originalComponente = Component::with(['subcomponents.subcomponent_attributes', 'type', 'attributes'])->find($value);
+                    //si queremos que solo a fecte al componente padre i no donde se utilice por 
+                    //ejemplo en un grid en una pagina solo afecta al grid i no en esa pagina donde se usa el
                     if($subcomponent){
-                        $originalSubComponente = Subcomponent::with(['subcomponents'])->find($subcomponent->id);
-                        $componente = Component::with(['subcomponents'])->find($value);
+                        $originalSubComponente = Subcomponent::with(['subcomponents.subcomponent_attributes'])->find($subcomponent->id);
+                        $componente = Component::with(['subcomponents.subcomponent_attributes'])->find($value);
                         $subNew = Subcomponent::create([
                             'component_child_id' => $value,
                             'subcomponent_id' => $subcomponent->id,
@@ -387,16 +389,67 @@ class ComponentController extends Controller
                             $this->replicateSubComponent($subMain,$subNew2);
                         }
                     }else{
-                        $subNew = Subcomponent::create([
-                            'component_child_id' => $originalComponente->id,
-                            'component_parent_id' => $component->id,
-                            'order' => count($originalComponente->subcomponents)+1,
+                        /* $component = Component::whereHas('posts', function ($query) use ($request) {
+                           $query->where('id', 1);
+                       })
+                           ->with(['subcomponents.subcomponent_attributes', 'type', 'attributes'])
+                           ->first(); */
+                     /*  dd(Subcomponent::with(['parent','component'])->where('component_child_id', $id)->first())
+                      dd(Subcomponent::with(['parent','component'])->get()); 
+*/
+                      $subNew2 =Subcomponent::with(['subcomponents.parent'])->where('component_child_id', $id)->get();
+                       if(false){
+                           foreach ($subNew2 as $subNew) {
+                               $subcomponent=$subNew;
+                               $originalSubComponente = Subcomponent::with(['subcomponents.subcomponent_attributes'])->find($subcomponent->id);
+                               $componente = Component::with(['subcomponents.subcomponent_attributes'])->find($value);
+                               $subNew = Subcomponent::create([
+                                   'component_child_id' => $value,
+                                   'subcomponent_id' => $subcomponent->id,
+                                   'order' => count($originalSubComponente->subcomponents)+1,
+                               ]);
+                               $originalSubComponente->subcomponents()->save($subNew);
 
-                        ]);
-                        $subNew->save();
-                        $this->replicateSubComponent($originalComponente,$subNew);
-                        $subNew->save();
-                    }
+                               foreach ($componente->subcomponents as $subMain) {
+                                   $subNew2 = Subcomponent::create([
+                                       'component_child_id' => $subMain->component->id,
+                                       'subcomponent_id' => $subNew->id,
+                                       'order' => count($originalSubComponente->subcomponents)+1,
+                                   ]);
+                                   $subNew->subcomponents()->save($subNew2);
+
+                                   foreach ($subMain->subcomponent_attributes as $attribute) {
+                                       $newAttribute = $attribute->replicate();
+                                       $subNew2->subcomponent_attributes()->save($newAttribute);
+                                       $subNew2->save();
+                                   }
+
+                                   $this->replicateSubComponent($subMain,$subNew2);
+                               }
+
+                               $subNew = Subcomponent::create([
+                                   'component_child_id' => $originalComponente->id,
+                                   'component_parent_id' => $component->id,
+                                   'order' => count($originalComponente->subcomponents)+1,
+                               ]); 
+                               $subNew->save();
+                               $this->replicateSubComponent($originalComponente,$subNew);
+                               $subNew->save(); 
+                           }
+                           
+                       }else{
+                       
+                            $subNew = Subcomponent::create([
+                               'component_child_id' => $originalComponente->id,
+                               'component_parent_id' => $component->id,
+                               'order' => count($originalComponente->subcomponents)+1,
+                           ]); 
+                           $subNew->save();
+                           $this->replicateSubComponent($originalComponente,$subNew);
+                           $subNew->save();  
+                       }
+
+                   }
                     // Crea una copia del componente original
                     //$component->copied_id=$request->copied_id;
                     // Guarda la nueva copia del componente
@@ -456,7 +509,7 @@ class ComponentController extends Controller
     }
     public function getSubcontentWithComponents($subcontentId)
     {
-        $subcontent = Component::with('post', 'subcomponents', 'type.attributes', 'attributes')->find($subcontentId);
+        $subcontent = Component::with('post', 'subcomponents.subcomponent_attributes', 'type.attributes', 'attributes')->find($subcontentId);
 
         if ($subcontent && $subcontent->subcomponents) {
             foreach ($subcontent->subcomponents as $sub) {
@@ -542,7 +595,7 @@ class ComponentController extends Controller
             $subcomponent->order = $order;
             $subcomponent->save();
         }
-        $component = Component::with(['posts','subcomponents', 'type', 'attributes'])->find($request->input('parent_id'));
+        $component = Component::with(['posts','subcomponents.subcomponent_attributes', 'type', 'attributes'])->find($request->input('parent_id'));
         return response()->json(['message' => 'Reordenación exitosa', 'data'=>$component], 200);
     }
 

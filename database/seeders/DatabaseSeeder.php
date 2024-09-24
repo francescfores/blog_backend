@@ -53,6 +53,6 @@ class DatabaseSeeder extends Seeder
         $role->givePermissionTo(Permission::all());
 
         //$this->call(ComponentsSeeder::class);
-        $this->call(ComponentsSeeder_v2::class);
+        $this->call(ComponentsSeeder_v2_copy::class);
     }
 }

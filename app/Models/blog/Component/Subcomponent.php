@@ -16,7 +16,10 @@ class Subcomponent extends Model
     {
         return $this->belongsTo(Component::class,'component_child_id');
     }
-
+    public function parent()
+    {
+        return $this->belongsTo(Component::class,'component_parent_id');
+    }
     public function subcomponents()
     {
         return $this->belongsToMany(

@@ -141,7 +141,7 @@ class ComponentsSeeder_v2 extends Seeder
 
 
 
-        $subgrid = Subcomponent::create([
+      /*   $subgrid = Subcomponent::create([
             'component_child_id' => $component_grid->id,
             'component_parent_id' => $component_page->id,
         ]);
@@ -182,7 +182,7 @@ class ComponentsSeeder_v2 extends Seeder
             'value' => 'text-lg mt-4 text-slate-600 max-w-xl',
         ]);
         $subtext2->subcomponent_attributes()->save($attribute3);
-        $subtext2->save();
+        $subtext2->save(); */
 
 
         // Más componentes
@@ -211,7 +211,7 @@ class ComponentsSeeder_v2 extends Seeder
         $component_img->attributes()->save($component_img_type_attr2);
         $component_img->save();
 
-        $subcard2 = Subcomponent::create([
+      /*   $subcard2 = Subcomponent::create([
             'component_child_id' => $component_card->id,
             'subcomponent_id' => $subgrid->id,
         ]);
@@ -271,6 +271,6 @@ class ComponentsSeeder_v2 extends Seeder
             'value' => 'Astro comes batteries included. It takes the best parts of state-of-the-art tools and adds its own innovations.',
         ]);
         $subtext2->subcomponent_attributes()->save($attribute3);
-        $subtext2->save();
+        $subtext2->save(); */
     }
 }

@@ -25,4 +25,4 @@ Route::get('/test-database', function () {
         dd("Could not connect to the database.  Please check your configuration. Error:" . $e );
     }
 });
-Route::get('post_category', [PostCategoryController::class, 'index']);
+//Route::get('post_category', [PostCategoryController::class, 'index']);
