@@ -38,17 +38,7 @@
 
         "APP_DEBUG": "true",
 
-        "DB_CONNECTION":"mysql",
-
-        "DB_HOST":"database.c3aem6q8kqy0.eu-west-3.rds.amazonaws.com",
-        
-        "DB_PORT":"3306",
-
-        "DB_DATABASE":"blog",
-
-        "DB_USERNAME":"admin",
-
-        "DB_PASSWORD":"Eldelmerca93",
+        "DATABASE_URL": "mysql://avnadmin:AVNS_DijA3rBahkiULZTwKky@mysql-3210d606-ffores93-623e.l.aivencloud.com:16615/blog?ssl-mode=REQUIRED",
 
         "APP_URL": "https://laravel-api-black.vercel.app/",
 
