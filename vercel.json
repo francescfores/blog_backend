@@ -38,7 +38,7 @@
 
         "APP_DEBUG": "true",
 
-        "DATABASE_URL": "mysql://avnadmin:AVNS_DijA3rBahkiULZTwKky@mysql-3210d606-ffores93-623e.l.aivencloud.com:16615/blog?ssl-mode=REQUIRED",
+        "DATABASE_URL": "mysql://admin:Eldelmerca93@database.c3aem6q8kqy0.eu-west-3.rds.amazonaws.com:3306/blog",
 
         "APP_URL": "https://laravel-api-black.vercel.app/",
 
