@@ -38,7 +38,7 @@
 
         "APP_DEBUG": "true",
 
-        "DATABASE_URL": "mysql://eo4UM4CbzsXnbte.root:2CRAQADbGl2Ugs4i@gateway01.eu-central-1.prod.aws.tidbcloud.com:4000/test",
+        "DATABASE_URL": "mysql://avnadmin:AVNS_DijA3rBahkiULZTwKky@mysql-3210d606-ffores93-623e.l.aivencloud.com:16615/defaultdb?ssl-mode=REQUIRED",
 
         "APP_URL": "https://laravel-api-black.vercel.app/",
 
