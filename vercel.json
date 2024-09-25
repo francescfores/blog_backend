@@ -1,36 +1,91 @@
 {
+
     "version": 2,
+
     "builds": [
-        { "src": "/api/index.php", "use": "vercel-php@0.6.0" },
+
+        { "src": "/api/index.php", "use": "vercel-php@0.5.4" },
+
         { "src": "/public/**", "use": "@vercel/static" }
+
     ],
+
     "routes": [
+
         {
+
             "src": "/(css|js)/(.*)",
+
             "dest": "public/$1/$2"
+
         },
+
         {
+
             "src": "/(.*)",
+
             "dest": "/api/index.php"
+
         }
+
     ],
+
     "env": {
+
         "APP_KEY": "base64:G6ZtUMbvFszAaJuqT7256tuvThPqom1f6ANDwjHHIWs=",
-        "APP_NAME": "Vercel Laravel",
+
         "APP_ENV": "production",
-        "APP_DEBUG": "false",
-        "APP_URL": "https://php-laravel.vercel.app",
-        "VERCEL_DEMO_MODE": "true",
+
+        "APP_DEBUG": "true",
+
+        "DATABASE_URL": "mysql://eo4UM4CbzsXnbte.root:2CRAQADbGl2Ugs4i@gateway01.eu-central-1.prod.aws.tidbcloud.com:4000/test",
+
+        "APP_URL": "https://laravel-api-black.vercel.app/",
+
         "APP_CONFIG_CACHE": "/tmp/config.php",
+
         "APP_EVENTS_CACHE": "/tmp/events.php",
+
         "APP_PACKAGES_CACHE": "/tmp/packages.php",
+
         "APP_ROUTES_CACHE": "/tmp/routes.php",
+
         "APP_SERVICES_CACHE": "/tmp/services.php",
+
+        "VIEW_COMPILED_PATH": "/tmp",
+
         "CACHE_DRIVER": "array",
+
         "LOG_CHANNEL": "stderr",
-        "SESSION_DRIVER": "array",
-        "VIEW_COMPILED_PATH": "/tmp/views",
-        "SSR_TEMP_PATH": "/tmp/ssr",
-        "NODE_PATH": "node"
+
+        "SESSION_DRIVER": "cookie",
+
+        "JWT_SECRET": "sp12f1rd9JIs1Dh1DXnVncSRRgQsbjm4znO3olHutwYyfsV9Nppuxt2pvQKghzFO",
+
+        "VERCEL_AW_ACCESS_KEY_ID": "AKIA54RILER3IUM5PISM",
+
+        "VERCEL_AW_SECRET_ACCESS_KEY": "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",
+
+        "VERCEL_AW_DEFAULT_REGION": "eu-west-3",
+
+        "VERCEL_AW_BUCKET": "laravel-api-ecommerce",
+
+        "MAIL_MAILER":"smtp",
+
+        "MAIL_HOST":"in-v3.mailjet.com",
+
+        "MAIL_PORT":"587",
+
+        "MAIL_USERNAME":"0cd1141f1f8c63f7ad7f2492413686d3",
+
+        "MAIL_PASSWORD":"1d416c1702e4d0e8b78b06b5ec7dad9c",
+
+        "MAIL_ENCRYPTION":"tls",
+
+        "MAIL_FROM_ADDRESS":"ffores93@gmail.com",
+
+        "MAIL_FROM_NAME":"Paletudo"
+
     }
+
 }
