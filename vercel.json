@@ -39,6 +39,13 @@
         "APP_DEBUG": "true",
 
         "DATABASE_URL": "mysql://admin:Eldelmerca93@database.c3aem6q8kqy0.eu-west-3.rds.amazonaws.com:3306/blog?ssl-mode=REQUIRED",
+        "DB_CONNECTION": "mysql",
+        "DB_HOST": "database.c3aem6q8kqy0.eu-west-3.rds.amazonaws.com",
+        "DB_PORT": "3306",
+        "DB_DATABASE": "blog",
+        "DB_USERNAME": "admin",
+        "DB_PASSWORD": "Eldelmerca93",
+        "DB_SSLMODE": "require",
 
         "APP_URL": "https://laravel-api-black.vercel.app/",
 

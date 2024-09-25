@@ -62,6 +62,7 @@ return [
 //                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
 //            ]) : [],
             'options' => [
+                PDO::ATTR_TIMEOUT => 60,  // Ajusta el timeout según sea necesario
                 PDO::MYSQL_ATTR_SSL_CA => null, // No necesitas especificar la ruta al archivo CA
                 PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false, // Deshabilita la verificación del certificado del servidor
             ],
