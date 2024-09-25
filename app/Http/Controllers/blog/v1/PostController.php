@@ -37,14 +37,14 @@ class PostController extends Controller
     public function index(): JsonResponse
     {
         //Listamos todos los postos
-        $posts = Post::with('category','tags','comments','contents','user','client')->get();
+        $posts = Post::with('category','comments','contents','user','client')->get();
         $postscat = PostCategory::get();
         return response()->json([
             'data' => $posts
         ], 200);
     }
     public function paginated(Request $request){
-        $posts = Post::with('category','tags','comments','contents','user','client','images')->paginate(5);
+        $posts = Post::with('category','comments','contents','user','client','images')->paginate(5);
         return response()->json([
             'data' => $posts
         ], 200);
@@ -113,7 +113,7 @@ class PostController extends Controller
 
         return response()->json([
             'message' => 'post created',
-            'data' => Post::with('category','tags','comments','contents','user','client','images')->find($post->id),
+            'data' => Post::with('category','comments','contents','user','client','images')->find($post->id),
         ], Response::HTTP_OK);
     }
     /**
