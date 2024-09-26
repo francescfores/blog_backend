@@ -125,7 +125,11 @@ class ComponentController extends Controller
                 'component_child_id' => $subMain->component->id,
                 'component_parent_id' => $component->id,
             ]);
-
+            foreach ($subMain->subcomponent_attributes as $attribute) {
+                $newAttribute = $attribute->replicate();
+                $subNew->subcomponent_attributes()->save($newAttribute);
+                $subNew->save();
+            }
             $this->replicateSubComponent($subMain,$subNew);
         }
         $component->save();
@@ -142,6 +146,7 @@ class ComponentController extends Controller
                 'subcomponent_id' => $subNew->id,
             ]);
             $subNew->subcomponents()->save($subNew2);
+
             foreach ($subMain2->subcomponent_attributes as $attribute) {
                 $newAttribute = $attribute->replicate();
                 $subNew2->subcomponent_attributes()->save($newAttribute);
@@ -177,10 +182,14 @@ class ComponentController extends Controller
         }
 
         if($request->copied_id && $request->copied_id!='undefined'){
+
               if($request->copy_childs && $request->copy_childs!='undefined'){
+
                   $originalComponente = Component::with(['posts','subcomponents.subcomponent_attributes', 'type', 'attributes'])->find($request->copied_id);
                   $component= $this->replicateComponent($originalComponente);
+
               }else{
+
                   $originalComponent = Component::with(['posts','subcomponents.subcomponent_attributes', 'type', 'attributes'])->find($request->copied_id);
                   $component = $originalComponent->replicate();
                   $component->type()->associate($originalComponent->type);
@@ -188,6 +197,7 @@ class ComponentController extends Controller
                   $this->addAttrToChild($originalComponent,$component);
               }
         }else{
+
             $component = Component::create([
                 'name' => $request->name,
                 'desc' => $request->desc,
@@ -308,7 +318,6 @@ class ComponentController extends Controller
         $type = ComponentType::find($request->type);
         //$component->type()->associate($type);
         foreach ($component->attributes as $attribute) {
-
             $key ='default_attrs_';
             if ($request->has($key.''.$attribute->name)) {
                 $attr = $component->attributes()->where('name', $attribute->name)->first();

@@ -141,7 +141,7 @@ class ComponentsSeeder_v2 extends Seeder
 
 
 
-      /*   $subgrid = Subcomponent::create([
+         $subgrid = Subcomponent::create([
             'component_child_id' => $component_grid->id,
             'component_parent_id' => $component_page->id,
         ]);
@@ -182,7 +182,7 @@ class ComponentsSeeder_v2 extends Seeder
             'value' => 'text-lg mt-4 text-slate-600 max-w-xl',
         ]);
         $subtext2->subcomponent_attributes()->save($attribute3);
-        $subtext2->save(); */
+        $subtext2->save();
 
 
         // Más componentes
