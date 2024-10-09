@@ -17,6 +17,9 @@ use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
+use App\Models\blog\Component\Component;
+use App\Models\blog\Component\ComponentAttribute;
+use App\Models\blog\Component\ComponentType;
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -32,32 +35,22 @@ class DatabaseSeeder extends Seeder
         // ]);
 
 
-        $user = User::create([
-            'id' => '1',
-            'name' => 'superadmin',
-            'email' => 'superadmin@gmail.com',
-            'email_verified_at' => NULL,
-            'password' => Hash::make('123456'),
-            'phone' => '977502170',
-            'address' => 'Calle',
-            'firstName' => 'super',
-            'lastName' => 'admin',
+        $component_button_type = ComponentType::create([
+            'name' => 'button_default',
+            'desc' => 'type button',
+        ]);
+        $component_button = Component::create([
+            'name' => 'button',
+            'desc' => 'button desc',
+        ]);
+        $component_attr = ComponentAttribute::create([
+            'name' => 'styles',
+            'value' => 'grid lg:grid-cols-2 place-items-center pt-16 pb-8 md:pt-12 md:pb-24',
         ]);
 
-        $role = Role::create(['name' => 'superadmin']);
-        $role->givePermissionTo(Permission::all());
-        $user->assignRole('superadmin');
-        $role = Role::create(['name' => 'admin']);
-        $role->givePermissionTo(Permission::all());
-        $role = Role::create(['name' => 'user']);
-        $role->givePermissionTo(Permission::all());
+        $component_button->attributes()->save($component_attr);
+        $component_button->type()->associate($component_button_type);
+        $component_button->save();
 
-        //$this->call(ComponentsSeeder::class);
-        $this->call(ComponentsSeeder_v2::class);
-/*         $this->call(ComponentsSeeder_v2_copy::class);
- */        $this->call(ComponentsSeeder_v3::class);
-        $this->call(ComponentsSeeder_v4::class);
-        $this->call(ComponentsSeeder_v5::class);
-        $this->call(ComponentsSeeder_button_component::class);
     }
 }

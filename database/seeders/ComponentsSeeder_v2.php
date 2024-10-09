@@ -47,10 +47,25 @@ class ComponentsSeeder_v2 extends Seeder
             'desc' => 'type page',
         ]);
 
-        $component_grid_type = ComponentType::create([
-            'name' => 'grid',
-            'desc' => 'type grid',
+        $component_button_type = ComponentType::create([
+            'name' => 'button',
+            'desc' => 'type button',
         ]);
+        $component_button = Component::create([
+            'name' => 'button',
+            'desc' => 'button desc',
+        ]);
+        $component_attr = ComponentAttribute::create([
+            'name' => 'styles',
+            'value' => 'grid lg:grid-cols-2 place-items-center pt-16 pb-8 md:pt-12 md:pb-24',
+        ]);
+
+        $component_button->attributes()->save($component_attr);
+        $component_button->save();
+
+
+
+        $component_button->type()->associate($component_button_type);
 
         $component_type_card = ComponentType::create([
             'name' => 'card',

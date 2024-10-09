@@ -67,28 +67,52 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 
 #
 # Blog backend
-### Export database (pkg: revolution/sail-db-backup)
-    vendor/bin/sail art sail:backup:mysql
+
 ### Import database from file.sql
     cat mysql_backup/laravel-202402010246.sql | vendor/bin/sail mysql
     cat mysql_backup/laravel-202409241550.sql | vendor/bin/sail mysql
+    cat mysql_backup/laravel-202409241940.sql | vendor/bin/sail mysql
+    cat mysql_backup/laravel-202409251845.sql | vendor/bin/sail mysql
 
 ## db comands
 
-    vendor/bin/sailsail artisna migrate
-    vendor/bin/sailsail artisna migrate:fresh
-    vendor/bin/sailsail artisan db:seed --class=DatabaseSeeder
-    vendor/bin/sailsail artisan migrate:refresh && vendor/bin/sailsail artisan db:seed --class=DatabaseSeeder
+    ./vendor/bin/sail artisan migrate
+    ./vendor/bin/sail artisan migrate:fresh
+    ./vendor/bin/sail artisan db:seed --class=DatabaseSeeder
+    ./vendor/bin/sail artisan migrate:refresh && ./vendor/bin/sail artisan db:seed --class=DatabaseSeeder
+
+## clear chache when change .env
+    ./vendor/bin/sail  artisan config:cache
 
 ## db queries
 
     select b.name from subcomponent a, component b where a.component_child_id = b.id;
+    select b.name from subcomponent a, component b where a.component_parent_id = b.id;
+    select * from subcomponent;
 
+## conect mysql aws rds
 
-## config fly
-  fly launch
-  fly ssh console
-  fly secrets set DB_USERNAME=3lc3vfwuq34tglq4fv1i
-  DB_PASSWORD=pscale_pw_hJMzGY4dhzHACfivHg8JoSfZjUwoiPHsxmelVCq4sLr
-  php artisan jwt:generate
-  fly secrets set JWT_SECRET=sp12f1rd9JIs1Dh1DXnVncSRRgQsbjm4znO3olHutwYyfsV9Nppuxt2pvQKghzFO
+    mysql -h database.c3aem6q8kqy0.eu-west-3.rds.amazonaws.com -P 3306 -u admin -p
+
+## backup server to local (mysql aws rds)
+
+    mysqldump -h database.c3aem6q8kqy0.eu-west-3.rds.amazonaws.com -P 3306 -u admin -p blog > backup_nombre_base_datos.sql
+
+## laod data server to local (mysql aws rds)
+    ./vendor/bin/sail  mysql
+    use blog
+    mysql> copy backup_nombre_base_datos.sql to mysql console
+
+### Export database (pkg: revolution/sail-db-backup)
+    vendor/bin/sail art sail:backup:mysql
+
+    vendor/bin/sail composer require beyondcode/laravel-er-diagram-generator --dev
+    vendor/bin/sail artisan vendor:publish --provider="BeyondCode\ErdGenerator\ErdGeneratorServiceProvider"
+    vendor/bin/sail artisan generate:erd
+    error 
+    vendor/bin/sail root-shell 
+    apt-get update && apt-get install -y graphviz
+    vendor/bin/sail artisan generate:erd
+
+    
+    ./vendor/bin/sail artisan db:seed --class=CategoriesSeeder

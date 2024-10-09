@@ -28,7 +28,7 @@ class PostCategoryController extends Controller
     public function index()
     {
         //Listamos todos los productos
-        $category = PostCategory::get();
+        $category = PostCategory::with('posts')->get();
         return response()->json([
             'data' => [
                 'category' => $category,
