@@ -96,8 +96,7 @@ class PostCategoryController extends Controller
     public function show($id)
     {
         //Bucamos el producto
-        $product = PostCategory::find($id);
-
+        $product = PostCategory::with('posts')->find($id);
         //Si el producto no existe devolvemos error no encontrado
         if (!$product) {
             return response()->json([
