@@ -27,6 +27,11 @@ class CategoriesSeeder extends Seeder
     {
        
         //category
+        /* $post_category = PostCategory::create([
+            'name' => 'general',
+            'desc' => 'general',
+            'img' => 'img',
+        ]);
         $post_category = PostCategory::create([
             'name' => 'css',
             'desc' => 'css',
@@ -39,8 +44,18 @@ class CategoriesSeeder extends Seeder
         ]);
         $post_category = PostCategory::create([
             'name' => 'animation',
-            'desc' => 'css',
+            'desc' => 'animation',
             'img' => 'img',
-        ]);
+        ]); */
+        /* $post_category = PostCategory::create([
+            'name' => 'frameworks',
+            'desc' => 'frameworks',
+            'img' => 'img',
+        ]); */
+        /* $post_category = PostCategory::create([
+            'name' => 'performance',
+            'desc' => 'performance',
+            'img' => 'img',
+        ]); */
     }
 }
