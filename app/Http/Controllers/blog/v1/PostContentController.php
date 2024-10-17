@@ -86,7 +86,7 @@ class PostContentController extends Controller
      */
     public function store(Request $request)
     {
-    //tipos de store
+        //tipos de store
         //crear compoente normal
         //crear un componente i agregarlo al post
         //copiar componente
@@ -114,10 +114,12 @@ class PostContentController extends Controller
                 $originalComponente = Component::with(['subcomponents', 'type', 'attributes'])->find($request->copied_id);
                 // Crea una copia del componente original
                 $component = $originalComponente->replicate();
+                $component->type()->associate($originalComponent->type);
                 //$component->copied_id=$request->copied_id;
                 // Guarda la nueva copia del componente
                 // Copiar todos los atributos relacionados del original al nuevo
                 $this->addAttrToChild($originalComponente,$component);
+                $component->save();
                 // Replicar subcomponentes de manera recursiva
                 $this->replicarSubcomponentes($originalComponente, $component);
                 $component->save();
@@ -167,7 +169,7 @@ class PostContentController extends Controller
             } catch (FileException $e) {
             }
         }
-       // return response()->json(['error' => [$post->id,$request->recycled_id,$request->copied_id]], 400);
+        // return response()->json(['error' => [$post->id,$request->recycled_id,$request->copied_id]], 400);
 
 
 
@@ -261,16 +263,16 @@ class PostContentController extends Controller
         }
         foreach ($request->all() as $key => $value) {
             if (Str::startsWith($key,'subcontent_')) {
-               // if($component->subcomponentsparents()->find($value)==null && $id !== $value && $value!='null'){
-                    $data  = Component::with(['subcomponents','type.attributes','attributes'])->find($value);
+                // if($component->subcomponentsparents()->find($value)==null && $id !== $value && $value!='null'){
+                $data  = Component::with(['subcomponents','type.attributes','attributes'])->find($value);
 
-                    $newComponente = $data->replicate();
-                    $newComponente->global = false;
-                    $newComponente->save();
-                    $this->replicarSubcomponentes($data, $newComponente);
-                    $component->subcomponents()->save($newComponente);
+                $newComponente = $data->replicate();
+                $newComponente->global = false;
+                $newComponente->save();
+                $this->replicarSubcomponentes($data, $newComponente);
+                $component->subcomponents()->save($newComponente);
 
-              //  }
+                //  }
 
             }
         }
