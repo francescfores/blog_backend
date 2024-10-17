@@ -112,7 +112,7 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
     error 
     vendor/bin/sail root-shell 
     apt-get update && apt-get install -y graphviz
-    vendor/bin/sail artisan generate:erd
+    vendor/bin/sail artisan generate:erd 
 
     
     ./vendor/bin/sail artisan db:seed --class=CategoriesSeeder
