@@ -1,0 +1,19 @@
+[0;1;32m●[0m docker.service - Docker Application Container Engine
+   Loaded: loaded (/lib/systemd/system/docker.service; enabled; vendor preset: enabled)
+   Active: [0;1;32mactive (running)[0m since Thu 2024-10-17 13:16:04 CEST; 3s ago
+     Docs: https://docs.docker.com
+ Main PID: 23196 (dockerd)
+    Tasks: 13
+   CGroup: /system.slice/docker.service
+           └─23196 /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
+
+oct 17 13:16:03 fran-pc dockerd[23196]: time="2024-10-17T13:16:03.600746177+02:00" level=info msg="Loading containers: start."
+oct 17 13:16:03 fran-pc dockerd[23196]: time="2024-10-17T13:16:03.839455787+02:00" level=info msg="Default bridge (docker0) is assigned with an IP address 172.17.0.0/16. Daemon option --bip can be used to set a preferred IP address"
+oct 17 13:16:03 fran-pc dockerd[23196]: time="2024-10-17T13:16:03.910078761+02:00" level=warning msg="error locating sandbox id b87aa06819f378210d4c9cfc8d0bb078428d087107de34bb548387e6e8b4457e: sandbox b87aa06819f378210d4c9cfc8d0bb078428d087107de34bb548387e6e8b4457e not found"
+oct 17 13:16:03 fran-pc dockerd[23196]: time="2024-10-17T13:16:03.910172400+02:00" level=warning msg="error locating sandbox id 543c68f10bac77be465aa3f96c661e6173ea0481b261c5a13e641662e50582b3: sandbox 543c68f10bac77be465aa3f96c661e6173ea0481b261c5a13e641662e50582b3 not found"
+oct 17 13:16:03 fran-pc dockerd[23196]: time="2024-10-17T13:16:03.910542674+02:00" level=info msg="Loading containers: done."
+oct 17 13:16:03 fran-pc dockerd[23196]: time="2024-10-17T13:16:03.926933488+02:00" level=warning msg="WARNING: No swap limit support"
+oct 17 13:16:03 fran-pc dockerd[23196]: time="2024-10-17T13:16:03.926995127+02:00" level=info msg="Docker daemon" commit=41ca978 containerd-snapshotter=false storage-driver=overlay2 version=27.3.1
+oct 17 13:16:03 fran-pc dockerd[23196]: time="2024-10-17T13:16:03.927049543+02:00" level=info msg="Daemon has completed initialization"
+oct 17 13:16:04 fran-pc dockerd[23196]: time="2024-10-17T13:16:04.017548606+02:00" level=info msg="API listen on /run/docker.sock"
+oct 17 13:16:04 fran-pc systemd[1]: Started Docker Application Container Engine.
