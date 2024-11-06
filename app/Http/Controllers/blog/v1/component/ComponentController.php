@@ -319,9 +319,14 @@ class ComponentController extends Controller
         //$component->type()->associate($type);
         foreach ($component->attributes as $attribute) {
             $key ='default_attrs_';
+            
             if ($request->has($key.''.$attribute->name)) {
                 $attr = $component->attributes()->where('name', $attribute->name)->first();
+                if($request->get($key.''.$attribute->name)==null){
+                    $attr->value='';
+                }else{
                 $attr->value=$request->get($key.''.$attribute->name);
+                }
                 $attr->save();
                 //if($request->get($attribute->name)!==$attribute->value || $request->get($attribute->name)!==''){
             }
