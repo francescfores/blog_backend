@@ -221,6 +221,8 @@ class PostContentController extends Controller
      */
     public function update(Request $request, $id)
     {
+        dd($type->attributes);
+
         $data = $request->only('post','num','name','type','desc','recycled_id','copied_id','global','subcomponent_id');
         $validator = Validator::make($data, [
             'name' => 'required|max:100000|string',
@@ -244,7 +246,7 @@ class PostContentController extends Controller
                 if($request->get($attribute->name)!==$attribute->value || $request->get($attribute->name)!==''){
                     $attr = $component->attributes()->where('name', $attribute->name)->first();
                     if ($attr) {
-                        $attr->value = $request->get($attribute->name);
+                        $attr->  = $request->get($attribute->name);
                         $attr->save();
                     }else{
                         $content_attr = ComponentAttribute::create([
@@ -316,7 +318,7 @@ class PostContentController extends Controller
 
         return response()->json([
             'message' => 'eeeeeee created',
-            'data' => $component,
+            'data2' => $component,
         ], Response::HTTP_OK);
         //Devolvemos los datos actualizados.
     }
