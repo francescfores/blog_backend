@@ -69,10 +69,7 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 # Blog backend
 
 ### Import database from file.sql
-    cat mysql_backup/laravel-202402010246.sql | vendor/bin/sail mysql
-    cat mysql_backup/laravel-202409241550.sql | vendor/bin/sail mysql
-    cat mysql_backup/laravel-202409241940.sql | vendor/bin/sail mysql
-    cat mysql_backup/laravel-202409251845.sql | vendor/bin/sail mysql
+    cat mysql_backup/laravel-202411062152.sql | vendor/bin/sail mysql
 
 ## db comands
 
@@ -116,3 +113,53 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 
     
     ./vendor/bin/sail artisan db:seed --class=CategoriesSeeder
+
+
+
+
+### Database queris
+
+UPDATE component_type
+SET name = 'button'
+WHERE id = 15;
+
+
+INSERT INTO component_attribute (created_at, updated_at, name, value, component_id)
+VALUES (NOW(), NOW(), 'height', '30px', 8);
+
+INSERT INTO component_attribute (created_at, updated_at, name, value, component_id)
+VALUES (NOW(), NOW(), 'width', '100px', 8);
+
+INSERT INTO component_attribute (created_at, updated_at, name, value, component_id)
+VALUES (NOW(), NOW(), 'raise', '10px', 8);
+
+INSERT INTO component_attribute (created_at, updated_at, name, value, component_id)
+VALUES (NOW(), NOW(), 'rounded', '20px', 8);
+
+INSERT INTO component_attribute (created_at, updated_at, name, value, component_id)
+VALUES (NOW(), NOW(), 'border', '10px', 8);
+
+INSERT INTO component_attribute (created_at, updated_at, name, value, component_id)
+VALUES (NOW(), NOW(), 'border_style', '#FF4769', 8);
+
+INSERT INTO component_attribute (created_at, updated_at, name, value, component_id)
+VALUES (NOW(), NOW(), 'bg_front_color', '#FF1F48', 8);
+
+INSERT INTO component_attribute (created_at, updated_at, name, value, component_id)
+VALUES (NOW(), NOW(), 'bg_shadow_color', '#D9D9D9', 8);
+
+INSERT INTO component_attribute (created_at, updated_at, name, value, component_id)
+VALUES (NOW(), NOW(), 'bg_back_color', '#E00029', 8);
+
+
+INSERT INTO component_attribute (created_at, updated_at, name, value, component_id)
+VALUES (NOW(), NOW(), 'font_color', '#fff', 8);
+
+INSERT INTO component_attribute (created_at, updated_at, name, value, component_id)
+VALUES (NOW(), NOW(), 'font_body_weight', '400', 8);
+
+INSERT INTO component_attribute (created_at, updated_at, name, value, component_id)
+VALUES (NOW(), NOW(), 'font_size', '20px', 8);
+
+INSERT INTO component_attribute (created_at, updated_at, name, value, component_id)
+VALUES (NOW(), NOW(), 'ripple', 'true', 8);

@@ -3,7 +3,6 @@
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Request;
 
-header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token, Authorization');
 header('Access-Control-Allow-Credentials: true');
@@ -58,3 +57,8 @@ $response = $kernel->handle(
 )->send();
 
 $kernel->terminate($request, $response);
+
+
+if (getenv('APP_DEBUG')) {
+	header('Access-Control-Allow-Origin: *');
+}
