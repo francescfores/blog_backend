@@ -23,7 +23,7 @@ class ComponentsSeeder_v5 extends Seeder
 {
     /**
      * Seed the application's database.
-     */
+    
     public function run(): void
     {
         //other seeder
@@ -56,5 +56,27 @@ class ComponentsSeeder_v5 extends Seeder
         $component6_type->save();
         $component6->save();
 
+    }
+ */
+        public function run(): void
+    {
+        //other seeder
+        $component6 = Component::create([
+            'name' => 'table_contents',
+            'desc' => 'table_contents',
+        ]);
+        $component6_type = ComponentType::create([
+            'name' => 'table_contents',
+            'desc' => 'table_contents',
+        ]);
+
+        $component6_type_attr9 = ComponentAttribute::create([
+            'name' => 'styles',
+            'value' => 'fa fa-book'
+        ]);
+        $component6->type()->associate($component6_type);
+        $component6->attributes()->save($component6_type_attr9);
+        $component6_type->save();
+        $component6->save();
     }
 }

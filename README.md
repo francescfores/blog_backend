@@ -75,7 +75,7 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 
     ./vendor/bin/sail artisan migrate
     ./vendor/bin/sail artisan migrate:fresh
-    ./vendor/bin/sail artisan db:seed --class=DatabaseSeeder
+    ./vendor/bin/sail artisan db:seed --class=ComponentsSeeder_v5
     ./vendor/bin/sail artisan migrate:refresh && ./vendor/bin/sail artisan db:seed --class=DatabaseSeeder
 
 ## clear chache when change .env
