@@ -163,3 +163,10 @@ VALUES (NOW(), NOW(), 'font_size', '20px', 8);
 
 INSERT INTO component_attribute (created_at, updated_at, name, value, component_id)
 VALUES (NOW(), NOW(), 'ripple', 'true', 8);
+
+INSERT INTO component_attribute (created_at, updated_at, name, value, component_id)
+VALUES (NOW(), NOW(), 'list', 'item1,item2,item3', 32);
+
+INSERT INTO component_attribute (created_at, updated_at, name, value, component_id)
+VALUES (NOW(), NOW(), 'show_iframe', 'true', 10);
+
