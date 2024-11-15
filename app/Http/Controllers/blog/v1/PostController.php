@@ -39,6 +39,9 @@ class PostController extends Controller
         //Listamos todos los postos
         $posts = Post::with('category','comments','user','client')->get();
         $postscat = PostCategory::get();
+        $posts = Post::orderBy('views', 'desc')  // Ordenar por el campo 'views' en orden descendente
+            ->limit(10)                 // Limitar los resultados a los 10 primeros
+            ->get();     
         return response()->json([
             'data' => $posts
         ], 200);
@@ -132,6 +135,7 @@ class PostController extends Controller
             'components.subcomponents',
             'user',
             'client')->find($id);
+        $post->increment('views'); 
 //        $post2 = $post->contents()->whereNull('post_content_id')->get();
         //$Post= Variation::with(['Post', 'Post.category', 'Post.subcategory', 'Post.supercategory', 'attributes'])->find($id);
         //Si el Posto no existe devolvemos error no encontrado

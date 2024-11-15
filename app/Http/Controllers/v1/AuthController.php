@@ -13,6 +13,7 @@ use Tymon\JWTAuth\Exceptions\JWTException;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Validator;
 use function PHPUnit\Framework\isEmpty;
+use Google\Auth\AccessToken;
 
 class AuthController extends Controller
 {
@@ -20,14 +21,10 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         //Indicamos que solo queremos recibir name, email y password de la request
-        $data = $request->only('name', 'email', 'password', 'phone', 'address', 'lastName', 'roles');
+        $data = $request->only('nick', 'email', 'password');
         //Realizamos las validaciones
         $validator = Validator::make($data, [
-            'name' => 'required|string',
-            'phone' => 'required|string',
-            'roles' => 'required',
-            'address' => 'required|string',
-            'lastName' => 'required|string',
+            'nick' => 'required|string',
             'email' => 'required|email|unique:users',
             'password' => 'required|string|min:6|max:50',
         ]);
@@ -37,15 +34,15 @@ class AuthController extends Controller
         }
         //Creamos el nuevo usuario
         $user = User::create([
-            'name' => $request->name,
+            'name' => $request->nick,
             'email' => $request->email,
             'password' => bcrypt($request->password),
-            'phone' => $request->phone,
-            'address' => $request->address,
-            'firstName' => '',
-            'lastName' => $request->lastName,
+            'phone' => 'phone',
+            'address' => 'address',
+            'firstName' => 'firstName',
+            'lastName' => 'lastName',
         ]);
-        $rol = Role::findById($request->roles[0]);
+        $rol = Role::findById(3);//id 3 = user
             $user->assignRole($rol);
 
         //Nos guardamos el usuario y la contraseña para realizar la petición de token a JWTAuth
@@ -54,7 +51,7 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'User created',
             'token' => JWTAuth::attempt($credentials),
-            'user' => $request->roles[0]
+            'user' => $user
         ], Response::HTTP_OK);
     }
     //Funcion que utilizaremos para hacer login
@@ -218,4 +215,42 @@ class AuthController extends Controller
 //        return response()->json($bol);
 //    }
 
+    public function google(Request $request)
+    {
+
+$auth = new AccessToken();
+$payload=$auth->verify($request->input('id_token'));
+    
+        if ($payload) {
+            $user = User::where('email', $payload['email'])->first();
+
+            if (!$user) {
+                $user = User::create([
+                    'nick' => '',
+                    'email' => $payload['email'],
+                    'name' => $payload['name'],
+                               'phone' => 'phone',
+            'address' => 'address',
+            'firstName' => 'firstName',
+            'lastName' => 'lastName',
+                    'lng' => '',
+                ]);
+            }
+            // Crear un token de acceso sin necesidad de la contraseña
+            $customClaims = ['sub' => $user->id];
+            //Auth::login($user);
+            if (!$token = JWTAuth::fromUser($user, $customClaims)) {
+                return response()->json(['error' => 'invalid_credentials'], 401);
+            }
+
+            return response()->json([
+                'token' => $token,
+                'user' => $user
+            ], Response::HTTP_OK);
+        } else {
+            return response()->json([
+                'error' => 'Invalid ID token.'
+            ], 401);
+        }
+    }
 }

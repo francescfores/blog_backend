@@ -115,8 +115,6 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
     ./vendor/bin/sail artisan db:seed --class=CategoriesSeeder
 
 
-
-
 ### Database queris
 
 UPDATE component_type

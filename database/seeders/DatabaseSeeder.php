@@ -27,30 +27,18 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        //roles
+        $role = Role::create(['name' => 'superadmin']);
+        $role->givePermissionTo(Permission::all());
+        $user->assignRole('superadmin');
+        $role = Role::create(['name' => 'admin']);
+        $role->givePermissionTo(Permission::all());
+        $role = Role::create(['name' => 'user']);
+        $role->givePermissionTo(Permission::all());
 
-
-        $component_button_type = ComponentType::create([
-            'name' => 'button_default',
-            'desc' => 'type button',
-        ]);
-        $component_button = Component::create([
-            'name' => 'button',
-            'desc' => 'button desc',
-        ]);
-        $component_attr = ComponentAttribute::create([
-            'name' => 'styles',
-            'value' => 'grid lg:grid-cols-2 place-items-center pt-16 pb-8 md:pt-12 md:pb-24',
-        ]);
-
-        $component_button->attributes()->save($component_attr);
-        $component_button->type()->associate($component_button_type);
-        $component_button->save();
+        $user2->assignRole('admin');
+        $user3->assignRole('admin');
 
     }
 }

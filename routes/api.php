@@ -4,6 +4,7 @@ use App\Http\Controllers\blog\v1\component\ComponentController;
 use App\Http\Controllers\blog\v1\PostCategoryController;
 use App\Http\Controllers\blog\v1\PostContentController;
 use App\Http\Controllers\blog\v1\PostController;
+use App\Http\Controllers\blog\v1\UserController;
 use App\Http\Controllers\v1\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -30,9 +31,11 @@ Route::group([
 
 ], function ($router) {
 
+    Route::post('login_google', [AuthController::class, 'google']);
     Route::post('login', [AuthController::class, 'login']);
     Route::post('logout', [AuthController::class,'logout']);
     Route::post('refresh', [AuthController::class,'refresh']);
+    Route::post('register', [AuthController::class,'register']);
 
 });
 //Route::group(['middleware' => [\App\Http\Middleware\JwtMiddlware::class]], function() {
@@ -71,5 +74,12 @@ Route::group([
     //todo create controller ContentType
     Route::get('post_content_type', [ComponentController::class, 'getTypes']);
     Route::post('component/filter', [ComponentController::class, 'filter']);
+   
+    Route::get('user', [UserController::class, 'index']);    
+    Route::get('user_paginated', [UserController::class, 'paginated']);
+    Route::get('user/{id}', [UserController::class, 'show']);
+    Route::delete('user/{id}', [UserController::class, 'destroy']);
+    Route::put('user/{id}', [UserController::class, 'update']);
+    Route::post('user_between_date', [UserController::class, 'getBetweenDate']);
 
 //});
