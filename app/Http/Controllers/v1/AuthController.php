@@ -218,9 +218,39 @@ class AuthController extends Controller
     public function google(Request $request)
     {
 
+$auth = new AccessToken();
+$payload=$auth->verify($request->input('id_token'));
+    
+        if ($payload) {
+            $user = User::where('email', $payload['email'])->first();
+
+            if (!$user) {
+                $user = User::create([
+                    'nick' => '',
+                    'email' => $payload['email'],
+                    'name' => $payload['name'],
+                               'phone' => 'phone',
+            'address' => 'address',
+            'firstName' => 'firstName',
+            'lastName' => 'lastName',
+                    'lng' => '',
+                ]);
+            }
+            // Crear un token de acceso sin necesidad de la contraseña
+            $customClaims = ['sub' => $user->id];
+            //Auth::login($user);
+            if (!$token = JWTAuth::fromUser($user, $customClaims)) {
+                return response()->json(['error' => 'invalid_credentials'], 401);
+            }
 
             return response()->json([
+                'token' => $token,
+                'user' => $user
+            ], Response::HTTP_OK);
+        } else {
+            return response()->json([
                 'error' => 'Invalid ID token.'
-            ], 200);
+            ], 401);
+        }
     }
 }
