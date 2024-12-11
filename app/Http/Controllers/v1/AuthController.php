@@ -229,10 +229,10 @@ $payload=$auth->verify($request->input('id_token'));
                     'nick' => '',
                     'email' => $payload['email'],
                     'name' => $payload['name'],
-                               'phone' => 'phone',
-            'address' => 'address',
-            'firstName' => 'firstName',
-            'lastName' => 'lastName',
+                    'phone' => 'phone',
+                    'address' => 'address',
+                    'firstName' => 'firstName',
+                    'lastName' => 'lastName',
                     'lng' => '',
                 ]);
             }

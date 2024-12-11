@@ -93,7 +93,7 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 
 ## backup server to local (mysql aws rds)
 
-    mysqldump -h database.c3aem6q8kqy0.eu-west-3.rds.amazonaws.com -P 3306 -u admin -p blog > backup_nombre_base_datos.sql
+    mysqldump -h database.c3aem6q8kqy0.eu-west-3.rds.amazonaws.com -P 3306 -u admin -p blog > backup_nombre_base_datos3.sql
 
 ## laod data server to local (mysql aws rds)
     ./vendor/bin/sail  mysql
