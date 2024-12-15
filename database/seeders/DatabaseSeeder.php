@@ -27,7 +27,17 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-
+        $user = User::create([
+            'id' => '1',
+            'name' => 'superadmin',
+            'email' => 'superadmin@gmail.com',
+            'email_verified_at' => NULL,
+            'password' => Hash::make('123456'),
+            'phone' => '977502170',
+            'address' => 'Calle',
+            'firstName' => 'super',
+            'lastName' => 'admin',
+        ]);
         //roles
         $role = Role::create(['name' => 'superadmin']);
         $role->givePermissionTo(Permission::all());
@@ -36,9 +46,9 @@ class DatabaseSeeder extends Seeder
         $role->givePermissionTo(Permission::all());
         $role = Role::create(['name' => 'user']);
         $role->givePermissionTo(Permission::all());
-
-        $user2->assignRole('admin');
-        $user3->assignRole('admin');
+        $postSeeder = new ComponentsSeeder();
+        $postSeeder->users = $user; // Pasar la variable
+        $postSeeder->run();
 
     }
 }

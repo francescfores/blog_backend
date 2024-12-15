@@ -118,7 +118,7 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 ### Database queris
 
 UPDATE component_type
-SET name = 'button'
+SET name = 'button' 
 WHERE id = 15;
 
 

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('subname');
             $table->longText('desc');
+            $table->integer('views');
             $table->unsignedBigInteger('client_id')->nullable();
             $table->foreign('client_id')->references('id')->on('clients')
                 ->onDelete('cascade');

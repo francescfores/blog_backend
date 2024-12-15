@@ -301,12 +301,13 @@ class ComponentController extends Controller
         }
         $subcomponent=null;
         if($request->subcomponent_id!='undefined'){
+
             $component = Component::whereHas('parents', function ($query) use ($request) {
                 $query->where('id', $request->subcomponent_id);
             })
                 ->with(['subcomponents.subcomponent_attributes', 'type', 'attributes'])
                 ->first();
-            $subcomponent = Subcomponent::with(['component','subcomponent_attributes'])
+            $subcomponent = Subcomponent::with(['component','subcomponents','subcomponent_attributes'])
                 ->find($request->subcomponent_id);
         }else{
             $component = Component::with(['subcomponents.subcomponent_attributes', 'type', 'attributes'])
@@ -471,9 +472,7 @@ class ComponentController extends Controller
                     // Replicar subcomponentes de manera recursiva
                     // Replicar subcomponentes de manera recursiva
 
-
                 }
-
             }
         }
         try {
@@ -502,8 +501,11 @@ class ComponentController extends Controller
         } catch (FileException $e) {
         }
         $component->save();
+        $subcomponent = Subcomponent::with(['component.attributes','subcomponents','subcomponent_attributes'])
+                ->find($request->subcomponent_id);
         return response()->json([
             'message' => 'created',
+            'subcomponent' => $subcomponent,
             'data' => $component,
         ], Response::HTTP_OK);
         //Devolvemos los datos actualizados.

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\blog\v1;
 use App\Http\Controllers\Controller;
 use App\Models\blog\Component\Component;
+use App\Models\blog\Component\ComponentType;
+use App\Models\blog\Component\ComponentAttribute;
 use App\Models\blog\Image;
 use App\Models\blog\Post;
 use App\Models\blog\PostCategory;
@@ -87,11 +89,30 @@ class PostController extends Controller
             'subname' => $request->subname,
             'desc' => $request->desc,
             'price' => $request->price,
+            'views' => '0',
         ]);
         $user = PostCategory::find($request->user);
         $category = PostCategory::find($request->category);
         $post->user()->associate($user);
         $post->category()->associate($category);
+
+
+        $component_page = Component::create([
+            'name' => 'page',
+            'desc' => 'desc',
+        ]);
+
+        $component_page_type = ComponentType::where('name', 'page')->first();
+        $component_page_attr = ComponentAttribute::create([
+            'name' => 'styles',
+            'value' => 'flex flex-col  bg-bgPrim text-textPrimary w-full min-h-screen  justify-center items-center items-center pt-16',
+        ]);
+        //add type on component
+        $component_page->type()->associate($component_page_type);
+        $component_page->attributes()->save($component_page_attr);
+        $component_page_type->save();
+        $component_page->save();
+        $post->components()->save($component_page);
         $post->save();
 
 

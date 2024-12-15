@@ -27,67 +27,67 @@ class ComponentsSeeder_v3 extends Seeder
     public function run(): void
     {
         //other seeder
-        $component6 = Component::create([
+        $component = Component::create([
             'name' => 'codeplayground_v2',
             'desc' => 'codeplayground_v2',
         ]);
-        $component6_type = ComponentType::create([
+        $component_type = ComponentType::create([
             'name' => 'codeplayground_v2',
             'desc' => 'desc',
         ]);
-        $component6_type_attr = ComponentAttribute::create([
+        $component_type_attr = ComponentAttribute::create([
             'name' => 'styles',
             'value' => 'w-full',
         ]);
-        $component6_type_attr1 = ComponentAttribute::create([
+        $component_type_attr1 = ComponentAttribute::create([
             'name' => 'html',
             'value' => '<p>Testing</p>',
         ]);
-        $component6_type_attr2 = ComponentAttribute::create([
+        $component_type_attr2 = ComponentAttribute::create([
             'name' => 'css',
             'value' => 'p{color:red}',
         ]);
-        $component6_type_attr3 = ComponentAttribute::create([
+        $component_type_attr3 = ComponentAttribute::create([
             'name' => 'js',
             'value' => "console.log('testing');",
         ]);
-        $component6_type_attr4 = ComponentAttribute::create([
+        $component_type_attr4 = ComponentAttribute::create([
             'name' => 'height',
             'value' => 'h-[300px]'
         ]);
-        $component6_type_attr5 = ComponentAttribute::create([
+        $component_type_attr5 = ComponentAttribute::create([
             'name' => 'bg_color_1',
             'value' => 'bg-[#151528]'
         ]);
-        $component6_type_attr6 = ComponentAttribute::create([
+        $component_type_attr6 = ComponentAttribute::create([
             'name' => 'bg_color_2',
             'value' => 'bg-[#2A2A50]'
         ]);
-        $component6_type_attr7 = ComponentAttribute::create([
+        $component_type_attr7 = ComponentAttribute::create([
             'name' => 'text_color_1',
             'value' => 'text-[#d8d6ff]'
         ]);
-        $component6_type_attr8 = ComponentAttribute::create([
+        $component_type_attr8 = ComponentAttribute::create([
             'name' => 'text_color_2',
             'value' => 'text-[#7e73a2]'
         ]);
-        $component6_type_attr9 = ComponentAttribute::create([
+        $component_type_attr9 = ComponentAttribute::create([
             'name' => 'rounded',
             'value' => 'rounded-lg'
         ]);
-        //$post->components()->save($component6);
-        $component6->type()->associate($component6_type);
-        $component6->attributes()->save($component6_type_attr);
-        $component6->attributes()->save($component6_type_attr1);
-        $component6->attributes()->save($component6_type_attr2);
-        $component6->attributes()->save($component6_type_attr3);
-        $component6->attributes()->save($component6_type_attr4);
-        $component6->attributes()->save($component6_type_attr5);
-        $component6->attributes()->save($component6_type_attr6);
-        $component6->attributes()->save($component6_type_attr7);
-        $component6->attributes()->save($component6_type_attr8);
-        $component6->attributes()->save($component6_type_attr9);
-        $component6->save();
-        $component6_type->save();
+        //$post->components()->save($component);
+        $component->type()->associate($component_type);
+        $component->attributes()->save($component_type_attr);
+        $component->attributes()->save($component_type_attr1);
+        $component->attributes()->save($component_type_attr2);
+        $component->attributes()->save($component_type_attr3);
+        $component->attributes()->save($component_type_attr4);
+        $component->attributes()->save($component_type_attr5);
+        $component->attributes()->save($component_type_attr6);
+        $component->attributes()->save($component_type_attr7);
+        $component->attributes()->save($component_type_attr8);
+        $component->attributes()->save($component_type_attr9);
+        $component->save();
+        $component_type->save();
     }
 }

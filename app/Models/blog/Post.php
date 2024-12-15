@@ -19,6 +19,7 @@ class Post extends Model
         'subname',
         'desc',
         'img',
+        'views',
     ];
 
     public function category()
