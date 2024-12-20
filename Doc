@@ -1,0 +1,131 @@
+Relaciones Principales
+Component:
+
+	Relación HasMany con Subcomponent:
+	Indica que un componente puede tener múltiples subcomponentes.
+	Relación BelongsToMany con Post (a través de Pivot):
+	Conexión intermedia que une componentes con publicaciones mediante la tabla pivote.
+	Relación HasMany con Image:
+	Un componente puede estar asociado con varias imágenes.
+
+
+Tabla Subcomponent:
+
+	La tabla Subcomponent tiene una relación BelongsToMany (muchos a muchos) consigo misma a través de la tabla Pivot.
+	Esto significa que un subcomponente puede estar relacionado con otros subcomponentes. Por ejemplo:
+	Caso típico: Un subcomponente puede depender de otros subcomponentes (ej. módulos relacionados en un sistema).
+
+
+Tabla Pivot:
+
+	Actúa como una tabla intermedia para implementar la relación muchos a muchos entre subcomponentes.
+	Columnas importantes en Pivot:
+	subcomponent_related_id: Representa el ID del subcomponente relacionado.
+	subcomponent_id: Representa el ID del subcomponente que está creando la relación.
+	Explicación del flujo:
+
+	Si un subcomponente necesita estar vinculado a otro subcomponente, se registra esa conexión en la tabla Pivot.
+	Ejemplo:
+	Un subcomponente A depende de B y C.
+	La tabla Pivot tendría entradas como:
+	(A, B)
+	(A, C)
+
+
+
+
+
+Guía para Desarrollar un SaaS: Constructor de Páginas Web con Angular y Laravel
+
+-Paso 1: Define las funciones esenciales
+Primero, tenemos que identificar las funciones mínimas necesarias para que nuestro constructor de páginas web SaaS sea funcional. Estas son las funciones básicas que implementaremos en la versión inicial (MVP):
+
+Gestión de usuarios:
+Registro e inicio de sesión: Permitir a los usuarios crear cuentas y acceder a la plataforma.
+Recuperación de contraseñas: Funcionalidad para recuperar contraseñas olvidadas mediante correo electrónico.
+Constructor de páginas:
+Creación y edición de páginas: Los usuarios podrán crear y editar páginas web con un editor visual.
+Manejo de plantillas básicas: Ofrecer algunas plantillas prediseñadas para facilitar la creación de las páginas.
+Almacenamiento:
+Guardar el contenido y la configuración de las páginas creadas por cada usuario en la base de datos.
+Hosting básico:
+Asignar un subdominio personalizado para cada usuario (por ejemplo, usuario.misitioweb.com).
+Sistema de pagos:
+Plan gratuito: Incluye 1 página con un subdominio.
+Plan premium: Páginas ilimitadas, dominio personalizado y eliminación de marca. Precio mensual: $10.
+
+
+-Paso 2: Diseña la arquitectura SaaS
+Para el modelo de base de datos, optaremos por un modelo single database multi-tenant, lo cual es más sencillo de implementar inicialmente y se escala bien conforme el SaaS crece.
+
+Tablas mínimas necesarias:
+users: Para almacenar los datos de los usuarios, como su email y contraseña.
+post: Para almacenar las páginas creadas por los usuarios. //todo ahora mismo se llaman post 
+components: Para guardar los elementos (bloques) de las páginas web.
+subscriptions: Para gestionar los planes de suscripción y pagos de los usuarios.
+
+
+-Paso 3: Construye la interfaz del usuario (Frontend)
+El frontend será desarrollado usando Angular, lo que nos permite crear aplicaciones dinámicas y con un excelente rendimiento. Además, utilizaremos TailwindCSS para crear un diseño atractivo de manera rápida.
+
+Funciones clave del constructor de páginas:
+Selector de plantillas básicas: Los usuarios podrán elegir plantillas prediseñadas para empezar.
+Editor visual: Implementaremos un editor drag-and-drop para que los usuarios puedan agregar bloques (textos, imágenes, botones, etc.) sin escribir código.
+Vista previa en tiempo real: Los usuarios podrán ver cómo quedará su página mientras la editan.
+Herramientas y librerías a usar:
+Angular: Para gestionar el estado de la aplicación y construir la interfaz.
+TailwindCSS: Para un diseño limpio y responsivo.
+Angular Material (opcional): Para componentes UI como botones, formularios, y otros elementos comunes.
+
+
+-Paso 4: Implementa el backend con Laravel
+El backend estará desarrollado usando Laravel, que es un framework PHP robusto y muy bien estructurado para aplicaciones web. Laravel nos proporciona una excelente base para manejar la autenticación, la gestión de base de datos, y las APIs RESTful.
+
+
+-Paso 5: Configura el almacenamiento
+El contenido de las páginas (como texto y configuraciones) se guardará en MySQL. Sin embargo, los archivos estáticos como imágenes o CSS deben almacenarse en un servicio de almacenamiento en la nube.
+
+Almacenamiento de contenido:
+Guardamos el contenido de la página en la base de datos MySQL en formato JSON para mayor flexibilidad.
+
+Almacenamiento de archivos estáticos:
+Usamos AWS S3 o Google Cloud Storage para almacenar imágenes y archivos de mayor tamaño.
+
+
+-Paso 6: Implementa el sistema de pagos
+Para implementar el sistema de pagos, Stripe es una opción ideal debido a su facilidad de uso y documentación.
+
+Planes de suscripción:
+Plan gratuito: Un subdominio y 1 página.
+Plan premium: Páginas ilimitadas, subdominio personalizado, y sin marcas. Precio mensual de $10.
+Integración con Stripe:
+Usamos Stripe API para gestionar pagos y suscripciones recurrentes.
+
+
+-Paso 7: Despliega el MVP
+Para el despliegue:
+
+Frontend y Backend: Usamos Vercel para desplegar nuestra aplicación.
+Base de datos: Usamos un servicio gestionado como AWS RDS o PlanetScale para MySQL.
+
+
+-Paso 8: Lanza y recoge feedback
+Antes de lanzar a gran escala, realizamos una prueba cerrada con un grupo de usuarios beta. Esto nos permitirá obtener feedback valioso para mejorar la plataforma.
+
+Grupo de prueba: Invita a amigos, freelancers o agencias pequeñas a probar la plataforma.
+Recoger feedback: Usamos herramientas como Hotjar para grabar las sesiones de usuario y ver cómo interactúan con el SaaS.
+
+
+-Paso 9: Optimiza y escala
+Conforme crece la base de usuarios:
+
+Escalabilidad de la infraestructura: Si el tráfico crece, configuramos un clúster de MySQL o cambiamos a una base de datos distribuida.
+CDN: Usamos servicios como Cloudflare para optimizar la entrega de recursos estáticos.
+Nuevas funcionalidades: Planeamos agregar la exportación de sitios web en HTML, integración SEO, y dominios personalizados.
+
+-Paso 10: Crecimiento continuo
+Para seguir creciendo, automatizamos procesos y mejoramos el soporte:
+
+Automatización: Usamos Zapier para integrar servicios rápidamente.
+API: Implementamos una API para permitir que otros desarrolladores usen nuestro constructor.
+Soporte al cliente: Usamos herramientas como Intercom para chat en vivo y gestionamos preguntas frecuentes (FAQs).

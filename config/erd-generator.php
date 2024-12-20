@@ -82,10 +82,10 @@ return [
         'concentrate' => true,
         'splines' => 'polyline',
         'overlap' => false,
-        'nodesep' => 1,
+        'nodesep' => 2,
         'rankdir' => 'LR',
         'pad' => 0.5,
-        'ranksep' => 2,
+        'ranksep' => 4,
         'esep' => true,
         'fontname' => 'Helvetica Neue'
     ],

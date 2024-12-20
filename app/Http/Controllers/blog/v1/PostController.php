@@ -21,6 +21,8 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Cache;
+
 class PostController extends Controller
 {
 //    protected $user;
@@ -39,7 +41,9 @@ class PostController extends Controller
     public function index(): JsonResponse
     {
         //Listamos todos los postos
-        $posts = Post::with('category','comments','user','client')->get();
+        $posts = Cache::remember('posts.all', 60, function () {
+            return Post::with('category', 'comments', 'user', 'client')->get();
+        });        
         $postscat = PostCategory::get();
         $posts = Post::orderBy('views', 'desc')  // Ordenar por el campo 'views' en orden descendente
             ->limit(10)                 // Limitar los resultados a los 10 primeros
@@ -49,7 +53,9 @@ class PostController extends Controller
         ], 200);
     }
     public function paginated(Request $request){
-        $posts = Post::with('category','comments','user','client','images')->paginate(5);
+        $posts = Cache::remember('posts.paginated', 60, function () {
+            return  Post::with('category','comments','user','client','images')->paginate(5);
+        });   
         return response()->json([
             'data' => $posts
         ], 200);

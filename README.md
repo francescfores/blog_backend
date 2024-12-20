@@ -69,7 +69,8 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 # Blog backend
 
 ### Import database from file.sql
-    cat mysql_backup/laravel-202411062152.sql | vendor/bin/sail mysql
+    cat mysql_backup/laravel-202412182303.sql | vendor/bin/sail mysql
+    cat mysql_backup/laravel-202412182303.sql | mysql -h database.c3aem6q8kqy0.eu-west-3.rds.amazonaws.com -P 3306 -u admin -p blog
 
 ## db comands
 
@@ -102,6 +103,9 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 
 ### Export database (pkg: revolution/sail-db-backup)
     vendor/bin/sail art sail:backup:mysql
+    or
+    sail exec -i mysql mysqldump -u root -p  laravel > backup.sql
+
 
     vendor/bin/sail composer require beyondcode/laravel-er-diagram-generator --dev
     vendor/bin/sail artisan vendor:publish --provider="BeyondCode\ErdGenerator\ErdGeneratorServiceProvider"
@@ -114,57 +118,45 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
     
     ./vendor/bin/sail artisan db:seed --class=CategoriesSeeder
 
+### Error DB MYSQL Accents
+    
+    Create file 
+    
+    mkdir -p docker/mysql
+
+    nano docker/mysql/my.cnf
+    [mysqld]
+    character-set-server = utf8mb4
+    collation-server = utf8mb4_unicode_ci
+
+    [client]
+    default-character-set = utf8mb4
+
+    [mysql]
+    default-character-set = utf8mb4
+
+
+    edit on docker config
+    - './docker/mysql/my.cnf:/etc/mysql/my.cnf'
+    docker exec -it blog_backend-mysql-1 bash
+
+    sail mysql
+    SHOW VARIABLES LIKE 'character_set%';
+
+    (no copy on mysql console)
+    cat mysql_backup/laravel-202412182303.sql | vendor/bin/sail mysql
+
+
+    exit  # Sal del contenedor de MySQL
+    vendor/bin/sail down
+    vendor/bin/sail up -d
 
 ### Database queris
 
-UPDATE component_type
-SET name = 'button' 
-WHERE id = 15;
+ALTER TABLE component ADD COLUMN custom BOOLEAN DEFAULT FALSE;
 
 
-INSERT INTO component_attribute (created_at, updated_at, name, value, component_id)
-VALUES (NOW(), NOW(), 'height', '30px', 8);
-
-INSERT INTO component_attribute (created_at, updated_at, name, value, component_id)
-VALUES (NOW(), NOW(), 'width', '100px', 8);
-
-INSERT INTO component_attribute (created_at, updated_at, name, value, component_id)
-VALUES (NOW(), NOW(), 'raise', '10px', 8);
-
-INSERT INTO component_attribute (created_at, updated_at, name, value, component_id)
-VALUES (NOW(), NOW(), 'rounded', '20px', 8);
-
-INSERT INTO component_attribute (created_at, updated_at, name, value, component_id)
-VALUES (NOW(), NOW(), 'border', '10px', 8);
-
-INSERT INTO component_attribute (created_at, updated_at, name, value, component_id)
-VALUES (NOW(), NOW(), 'border_style', '#FF4769', 8);
-
-INSERT INTO component_attribute (created_at, updated_at, name, value, component_id)
-VALUES (NOW(), NOW(), 'bg_front_color', '#FF1F48', 8);
-
-INSERT INTO component_attribute (created_at, updated_at, name, value, component_id)
-VALUES (NOW(), NOW(), 'bg_shadow_color', '#D9D9D9', 8);
-
-INSERT INTO component_attribute (created_at, updated_at, name, value, component_id)
-VALUES (NOW(), NOW(), 'bg_back_color', '#E00029', 8);
-
-
-INSERT INTO component_attribute (created_at, updated_at, name, value, component_id)
-VALUES (NOW(), NOW(), 'font_color', '#fff', 8);
-
-INSERT INTO component_attribute (created_at, updated_at, name, value, component_id)
-VALUES (NOW(), NOW(), 'font_body_weight', '400', 8);
-
-INSERT INTO component_attribute (created_at, updated_at, name, value, component_id)
-VALUES (NOW(), NOW(), 'font_size', '20px', 8);
-
-INSERT INTO component_attribute (created_at, updated_at, name, value, component_id)
-VALUES (NOW(), NOW(), 'ripple', 'true', 8);
-
-INSERT INTO component_attribute (created_at, updated_at, name, value, component_id)
-VALUES (NOW(), NOW(), 'list', 'item1,item2,item3', 32);
-
-INSERT INTO component_attribute (created_at, updated_at, name, value, component_id)
-VALUES (NOW(), NOW(), 'show_iframe', 'true', 10);
-
+### create db diagrama
+    
+    sail root-shell
+    apt-get update && apt-get install -y graphviz

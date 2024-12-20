@@ -114,6 +114,7 @@ class ComponentController extends Controller
     // Función recursiva para replicar subcomponentes
     function replicateComponent($component) {
         $component = $component->replicate();
+        $component->custom=1;
         $component->save();
         foreach ($component->attributes as $attribute) {
             $newAttribute = $attribute->replicate();
@@ -192,6 +193,7 @@ class ComponentController extends Controller
 
                   $originalComponent = Component::with(['posts','subcomponents.subcomponent_attributes', 'type', 'attributes'])->find($request->copied_id);
                   $component = $originalComponent->replicate();
+                  $component->custom=1;
                   $component->type()->associate($originalComponent->type);
                   $component->save();
                   $this->addAttrToChild($originalComponent,$component);
@@ -200,6 +202,7 @@ class ComponentController extends Controller
 
             $component = Component::create([
                 'name' => $request->name,
+                'custom' => 1,
                 'desc' => $request->desc,
                 'global' => filter_var($request->global, FILTER_VALIDATE_BOOLEAN),
             ]);

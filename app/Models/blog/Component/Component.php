@@ -16,6 +16,7 @@ class Component extends Model
         'desc',
         'subcomponents',
         'type',
+        'custom',
     ];
 
     public function subcomponents()
